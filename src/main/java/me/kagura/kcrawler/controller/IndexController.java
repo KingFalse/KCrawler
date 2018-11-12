@@ -2,6 +2,8 @@ package me.kagura.kcrawler.controller;
 
 import me.kagura.JJsoup;
 import org.jsoup.helper.Validate;
+import org.jsoup.nodes.Attribute;
+import org.jsoup.nodes.Attributes;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
@@ -11,6 +13,8 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 @Controller
 public class IndexController {
@@ -40,6 +44,51 @@ public class IndexController {
         return document;
     }
 
+    /**
+     * 1.选出所有的img
+     * 2.判断是否有.jog结尾的属性，有则继续
+     * 3.如果没有src属性则直接增加src，如果有src，则判断src是否重复出现，如果重复则替换src
+     */
+    public static Document lazyloadImage(Document document) {
+        Map<String, Integer> map = new HashMap<>();
+        Elements imgs = document.select("img");
+        for (Element img : imgs) {
+            if (img.hasAttr("src")) {
+                String src = img.attr("src");
+                if (map.containsKey(src)) {
+                    map.put(src, map.get(src) + 1);
+                } else {
+                    map.put(src, 0);
+                }
+            }
+        }
+
+        System.err.println(map);
+
+        for (Element img : imgs) {
+            //判断是否包含src属性
+//            String src = img.attr("src");
+//            if (img.hasAttr("src") && map.containsKey(src) && map.get(src) <= 1) {
+//                continue;
+//            }
+            Attributes attributes = img.attributes();
+            for (Attribute attribute : attributes) {
+                if (attribute.getKey().equals("src")) {
+                    continue;
+                }
+                //判断该属性是否是图片链接
+                if (attribute.getValue().matches("^[\\d\\D]*(\\.gif|\\.jpeg|\\.png|\\.jpg|\\.bmp)$")) {
+                    img.attr("src", img.attr("abs:" + attribute.getKey()));
+                    break;
+                }
+            }
+        }
+
+
+        return document;
+    }
+
+
     @GetMapping("/index/index")
     public String index() {
         return "/index22";
@@ -55,7 +104,8 @@ public class IndexController {
 //        String url = "https://anqing.meituan.com";
 //        String url = "https://www.oschina.net";
         Document document = jJsoup.connect(url).get();
-        document = convertToAbsUrlDocument(document);
+        convertToAbsUrlDocument(document);
+        lazyloadImage(document);
         document.select("script").remove();
         model.addAttribute("srcdoc", document.html());
         model.addAttribute("url", url);
