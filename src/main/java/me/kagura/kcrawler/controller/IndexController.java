@@ -22,6 +22,7 @@ public class IndexController {
     @Autowired
     JJsoup jJsoup;
 
+
     public static Document convertToAbsUrlDocument(Document document) {
         Validate.notEmpty(document.baseUri(), "document.baseUri() must not be empty");
         Elements relativePathElements = document.select("[src],[href]");
