@@ -601,14 +601,16 @@
                     }, timeout);
                 }
 
-
-                //点击遮罩背景自动关闭
-                $(".rhui-mask").click(function () {
-                    $target.unmask(callback);
-                    if (!isNaN(timeout)) {
-                        clearTimeout(p);
-                    }
-                });
+                if (isclickclose) {
+                    //点击遮罩背景自动关闭
+                    $(".rhui-mask").click(function () {
+                        $(".rhui-mask").unbind();
+                        $target.unmask(callback);
+                        if (!isNaN(timeout)) {
+                            clearTimeout(p);
+                        }
+                    });
+                }
 
                 if (flag) {
                     $("div.header > ul > li.right > input").val("确定");
@@ -803,8 +805,8 @@
 
         $('.main').mask('<div style=\"color:deeppink;font-size:6vw;;white-space:nowrap;\">请点选需要抓取的超链接</div>', function () {
             $('.main').mask('<div style=\"color:deeppink;font-size:6vw;;white-space:nowrap;\">如需抓取本页，请直接下一步</div>', function () {
-            }, 3000, false, false);
-        }, 3000, false, false);
+            }, 2000, false, false);
+        }, 2000, false, false);
 
 
     }
