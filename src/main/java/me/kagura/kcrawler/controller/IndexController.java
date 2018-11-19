@@ -11,6 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -96,12 +98,14 @@ public class IndexController {
     }
 
     @GetMapping("/select")
-    public String getMessage(Model model) throws IOException {
+    public String select(
+            Model model
+    ) throws IOException {
 //        String url = "http://sports.sohu.com/s2015/chuangye/";
 //        String url = "http://sports.qq.com/articleList/rolls/";
 //        String url = "https://news.qq.com";
-        String url = "https://www.kagura.me";
-//        String url = "https://www.ithome.com";
+//        String url = "https://www.kagura.me";
+        String url = "https://www.ithome.com";
 //        String url = "https://anqing.meituan.com";
 //        String url = "https://www.oschina.net";
         Document document = jJsoup.connect(url).get();
@@ -112,5 +116,36 @@ public class IndexController {
         model.addAttribute("url", url);
         return "select";
     }
+
+    @PostMapping("/select/detail")
+    public String selectDetail(
+            Model model,
+            @RequestParam String targetSelector,
+            @RequestParam String pageSelector,
+            @RequestParam String sampleUrl
+    ) throws IOException {
+        String url = "https://www.ithome.com/0/395/763.htm";
+        Document document = jJsoup.connect(url).get();
+        convertToAbsUrlDocument(document);
+        lazyloadImage(document);
+        document.select("script").remove();
+        model.addAttribute("srcdoc", document.html());
+        model.addAttribute("url", url);
+        return "select";
+    }
+
+//    @GetMapping("/select/detail")
+//    public String selectDetail2(
+//            Model model
+//    ) throws IOException {
+//        String url = "https://www.ithome.com/0/395/763.htm";
+//        Document document = jJsoup.connect(url).get();
+//        convertToAbsUrlDocument(document);
+//        lazyloadImage(document);
+//        document.select("script").remove();
+//        model.addAttribute("srcdoc", document.html());
+//        model.addAttribute("url", url);
+//        return "select";
+//    }
 
 }

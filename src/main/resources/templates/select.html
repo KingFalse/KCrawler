@@ -673,12 +673,14 @@
     </ul>
     <!--临时变量，记录当前被点击的cssSelector-->
     <input id="selector" value="" type="hidden">
-    <!--记录要爬取的链接-->
-    <input id="target-selector" value="" type="hidden">
-    <!--记录要翻页的链接-->
-    <input id="page-selector" value="" type="hidden">
-    <!--记录样本页面链接-->
-    <input id="sample-url" value="" type="hidden">
+    <form id="post-detail" action="/select/detail" method="post">
+        <!--记录要爬取的链接-->
+        <input id="targetSelector" name="targetSelector" value="" type="hidden">
+        <!--记录要翻页的链接-->
+        <input id="pageSelector" name="pageSelector" value="" type="hidden">
+        <!--记录样本页面链接-->
+        <input id="sampleUrl" name="sampleUrl" value="" type="hidden">
+    </form>
 </div>
 <div class="main">
     <iframe id="mainiframe" name="mainiframe" width="100%" height="1000px" src="" th:srcdoc="${srcdoc}" frameborder="0"
@@ -835,7 +837,7 @@
     function step1() {
         console.log("step1");
         $("#btn-next").attr("onclick", "step2();");
-        $("#target-selector").val($("#selector").val());
+        $("#targetSelector").val($("#selector").val());
         step2();
     }
 
@@ -845,7 +847,7 @@
     function step2() {
         console.log("step2");
         $("#btn-next").attr("onclick", "step3();");
-        $("#page-selector").val($("#selector").val());
+        $("#pageSelector").val($("#selector").val());
 
         $('.main').mask('<div style=\"color:deeppink;font-size:6vw;;white-space:nowrap;\">接下来请选择翻页元素</div>', function () {
             $('.main').mask('<div style=\"color:deeppink;font-size:6vw;;white-space:nowrap;\">如无需翻页，请直接下一步</div>', function () {
@@ -862,7 +864,7 @@
         console.log("step3");
         $("#btn-next").attr("onclick", "step4();");
         $(".fl-table tbody").html("");
-        $("#mainiframe").contents().find($("#target-selector").val()).each(function () {
+        $("#mainiframe").contents().find($("#targetSelector").val()).each(function () {
             console.log($(this).text());
             console.log($(this).attr("href"));
             $(".fl-table tbody").append('<tr class="nobackground"><td>' + $(this).text() + '</td><td style="text-align: left">' + $(this).attr("href") + '</td></tr>');
@@ -884,7 +886,7 @@
         $('tr:gt(0)').click(function () {
             $('tr:gt(0).tr-click').removeClass('tr-click');
             $(this).addClass('tr-click');
-            $("#sample-url").val($(this).find("td:eq(1)").text());
+            $("#sampleUrl").val($(this).find("td:eq(1)").text());
         });
 
     }
@@ -894,6 +896,10 @@
      */
     function step4() {
         console.log("step4");
+        console.log("目标select：" + $("#targetSelector").val());
+        console.log("翻页select：" + $("#pageSelector").val());
+        console.log("样本select：" + $("#sampleUrl").val());
+        $("#post-detail").submit();
     }
 
 </script>
