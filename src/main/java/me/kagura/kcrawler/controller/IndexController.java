@@ -134,18 +134,18 @@ public class IndexController {
         return "select";
     }
 
-//    @GetMapping("/select/detail")
-//    public String selectDetail2(
-//            Model model
-//    ) throws IOException {
-//        String url = "https://www.ithome.com/0/395/763.htm";
-//        Document document = jJsoup.connect(url).get();
-//        convertToAbsUrlDocument(document);
-//        lazyloadImage(document);
-//        document.select("script").remove();
-//        model.addAttribute("srcdoc", document.html());
-//        model.addAttribute("url", url);
-//        return "select";
-//    }
+    @GetMapping("/select/detail")
+    public String selectDetail2(
+            Model model
+    ) throws IOException {
+        String url = "https://www.ithome.com/0/395/763.htm";
+        Document document = jJsoup.connect(url).get();
+        convertToAbsUrlDocument(document);
+        lazyloadImage(document);
+        document.select("script").remove();
+        model.addAttribute("srcdoc", document.html());
+        model.addAttribute("url", url);
+        return "select-detail";
+    }
 
 }
