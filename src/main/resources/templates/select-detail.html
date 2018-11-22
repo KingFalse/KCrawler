@@ -486,7 +486,7 @@
     </style>
 
     <script src="http://libs.baidu.com/jquery/2.0.0/jquery.min.js"></script>
-    <link rel="stylesheet" type="text/css" href="http://www.semantic-ui.cn/dist/semantic.min.css">
+    <link href="http://www.semantic-ui.cn/dist/semantic.min.css" rel="stylesheet" type="text/css">
     <script src="http://www.semantic-ui.cn/dist/semantic.min.js"></script>
     <script type="text/javascript">
         $.fn.extend({
@@ -667,26 +667,26 @@
 <div class="header">
     <ul class="content">
         <li>
-            <input type="button" class="btn" value="返回">
+            <input class="btn" type="button" value="返回">
         </li>
         <li class="right">
-            <input id="btn-next" onclick="step1();" type="button" class="btn" value="下一步">
+            <input class="btn" id="btn-next" onclick="step1();" type="button" value="下一步">
         </li>
     </ul>
     <!--临时变量，记录当前被点击的cssSelector-->
-    <input id="selector" value="" type="hidden">
-    <form id="post-detail" action="/select/detail" method="post">
+    <input id="selector" type="hidden" value="">
+    <form action="/select/detail" id="post-detail" method="post">
         <!--记录要爬取的链接-->
-        <input id="targetSelector" name="targetSelector" value="" type="hidden">
+        <input id="targetSelector" name="targetSelector" type="hidden" value="">
         <!--记录要翻页的链接-->
-        <input id="pageSelector" name="pageSelector" value="" type="hidden">
+        <input id="pageSelector" name="pageSelector" type="hidden" value="">
         <!--记录样本页面链接-->
-        <input id="sampleUrl" name="sampleUrl" value="" type="hidden">
+        <input id="sampleUrl" name="sampleUrl" type="hidden" value="">
     </form>
 </div>
 <div class="main">
-    <iframe id="mainiframe" name="mainiframe" width="100%" height="1000px" src="" th:srcdoc="${srcdoc}" frameborder="0"
-            scrolling="auto" onload="kinit();"></iframe>
+    <iframe frameborder="0" height="1000px" id="mainiframe" name="mainiframe" onload="kinit();" scrolling="auto" src=""
+            th:srcdoc="${srcdoc}" width="100%"></iframe>
 </div>
 
 
@@ -694,12 +694,25 @@
     <table class="fl-table">
         <thead>
         <tr>
-            <th>文本</th>
             <th>结果为文本</th>
             <th>结果为代码</th>
         </tr>
         </thead>
         <tbody>
+        <tr>
+            <td id="td3">
+                <div class="ui toggle checkbox">
+                    <input name="public" type="checkbox">
+                    <label></label>
+                </div>
+            </td>
+            <td id="td4">
+                <div class="ui toggle checkbox">
+                    <input name="public" type="checkbox">
+                    <label></label>
+                </div>
+            </td>
+        </tr>
         </tbody>
     </table>
 </div>
@@ -743,26 +756,33 @@
             console.log("被点击的元素：" + path);
 
             $(".fl-table tbody").html("");
-            $("#mainiframe").contents().find(path).each(function () {
-                console.log($(this).text());
-                console.log($(this).attr("href"));
-                $(".fl-table tbody").append('<tr><td><div style="height:' + $(window).height() * 0.5 + 'px;width:' + $(window).width() * 0.4 + 'px">' + $(this).text() + '</div></td><td id="td3"></td><td id="td4"></td></tr>');
-            });
+            $(".fl-table tbody").append(
+                '<tr>' +
+                '   <td>' +
+                '       <div class="ui toggle checkbox">\n' +
+                '           <input type="checkbox" name="public">\n' +
+                '           <label></label>\n' +
+                '       </div>' +
+                '   </td>' +
+                '   <td>' +
+                '       <div class="ui toggle checkbox">\n' +
+                '           <input type="checkbox" name="public">\n' +
+                '           <label></label>\n' +
+                '       </div>' +
+                '   </td>' +
+                '</tr>' +
+                '<tr>' +
+                '<td><div style="height:' + $(window).height() * 0.5 + 'px;width:' + $(window).width() * 0.4 + 'px"><textarea readonly style="width: 100%;height: 100%" id="show-code"></textarea></div></td>' +
+                '<td><div style="height:' + $(window).height() * 0.5 + 'px;width:' + $(window).width() * 0.4 + 'px"><textarea readonly style="width: 100%;height: 100%" id="show-text"></textarea></div></td>' +
+                '</tr>' +
+                '');
 
-            $("#selector").val(path);
-            // var h = $(".table-wrapper").height();
-            // if ($(".table-wrapper").height() > $(window).height() * 0.5) {
-            //     h = $(window).height() * 0.7;
-            // }
-            $("#td3").html("<div class=\"ui toggle checkbox\">\n" +
-                "  <input type=\"checkbox\" name=\"public\">\n" +
-                "  <label></label>\n" +
-                "</div>");
-            $("#td4").html("<div class=\"ui toggle checkbox\">\n" +
-                "  <input type=\"checkbox\" name=\"public\">\n" +
-                "  <label></label>\n" +
-                "</div>");
-            // $('.main').mask('<div style=\"height:' + h + 'px;overflow-y: auto;\">' + $(".table-wrapper").html() + '</div>', "x", "x", true, true);
+
+            $("#mainiframe").contents().find(path).each(function () {
+                console.log($(this).prop("outerHTML"));
+                $('#show-code').text($('#show-code').text() + $(this).prop("outerHTML"));
+            });
+            $('#show-text').text($("#mainiframe").contents().find(path).text());
             $('.main').mask('<div>' + $(".table-wrapper").html() + '</div>', "x", "x", true, true);
 
         };
@@ -813,7 +833,7 @@
             //去除为纯数字的class
             path = path.replace(new RegExp(/\.[\d]+/), '');
             return path;
-        };
+        }
 
         changeFrameHeight();
 
@@ -837,7 +857,7 @@
 
     window.onresize = function () {
         changeFrameHeight();
-    }
+    };
     $(function () {
         changeFrameHeight();
     });
