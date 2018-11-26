@@ -958,7 +958,7 @@
             let list = [];
             v.forEach(function (i) {
                 console.log(i);
-                list[list.length == 0 ? 0 : list.length + 1] = i;
+                list[list.length == 0 ? 0 : list.length] = i;
             });
             body[k] = list;
         });
@@ -969,7 +969,6 @@
             type: 'POST',
             url: "/docrawler",
             data: JSON.stringify(body),
-            // data: body,
             // success: function (message) {
             //     if (message.err.code)
             //         alert(message.err.code);
