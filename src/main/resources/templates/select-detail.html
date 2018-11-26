@@ -651,7 +651,8 @@
 
                 $target.removeData('rhui.mask');
 
-                $("div.header > ul > li.right > input").val("下一步");
+                $("#btn-next").val("下一步");
+                $("#btn-next").attr("onclick", "nextstep();");
 
                 //判断并执行回调
                 if ($.isFunction(callback)) {
@@ -746,13 +747,13 @@
                 '<tr>' +
                 '   <td>' +
                 '       <div class="ui toggle checkbox">\n' +
-                '           <input id="checkbox1" type="checkbox" name="public" checked>\n' +
+                '           <input id="checkbox1" type="checkbox" 2type="text" checked>\n' +
                 '           <label></label>\n' +
                 '       </div>' +
                 '   </td>' +
                 '   <td>' +
                 '       <div class="ui toggle checkbox">\n' +
-                '           <input id="checkbox2" type="checkbox" name="public">\n' +
+                '           <input id="checkbox2" type="checkbox" 2type="code">\n' +
                 '           <label></label>\n' +
                 '       </div>' +
                 '   </td>' +
@@ -772,6 +773,20 @@
             $('#show-code').text($('#show-code').text().replace(" style=\"\"", ""));
             $('#show-text').text($("#mainiframe").contents().find(path).text());
             $('.main').mask('<div>' + $(".table-wrapper").html() + '</div>', "x", "x", true, true);
+            $(".table-wrapper .fl-table tbody").html("");
+
+            addToMap = function () {
+                $.each($('input[type=checkbox]'), function () {
+                    if ($(this).prop("checked") == true) {
+                        if (map.has(path)) {
+                            map.get(path).add($(this).attr("2type") + "");
+                        } else {
+                            map.set(path, new Set([$(this).attr("2type")]));
+                        }
+                    }
+                });
+                $('.main').unmask();
+            }
 
             $("input[type=checkbox]").change(function () {
                 if ($("#checkbox1").prop("checked") == false && $("#checkbox2").prop("checked") == false) {
@@ -779,8 +794,12 @@
                     $("#btn-next").attr("onclick", "$('.main').unmask();");
                 } else {
                     $("#btn-next").val("确定");
+                    $("#btn-next").attr("onclick", "addToMap();");
                 }
             });
+
+            $("#btn-next").val("确定");
+            $("#btn-next").attr("onclick", "addToMap();");
 
         };
 
@@ -860,76 +879,116 @@
     });
 
 
-    /**
-     * 进入第一步
-     */
-    function step1() {
-        console.log("step1");
-        $("#btn-next").attr("onclick", "step2();");
-        $("#targetSelector").val($("#selector").val());
-        step2();
-    }
+    // /**
+    //  * 进入第一步
+    //  */
+    // function step1() {
+    //     console.log("step1");
+    //     $("#btn-next").attr("onclick", "step2();");
+    //     $("#targetSelector").val($("#selector").val());
+    //     step2();
+    // }
 
-    /**
-     * 进入第二步
-     */
-    function step2() {
-        console.log("step2");
-        $("#btn-next").attr("onclick", "step3();");
-        $("#pageSelector").val($("#selector").val());
+    // /**
+    //  * 进入第二步
+    //  */
+    // function step2() {
+    //     console.log("step2");
+    //     $("#btn-next").attr("onclick", "step3();");
+    //     $("#pageSelector").val($("#selector").val());
+    //
+    //     $('.main').mask('<div style=\"color:deeppink;font-size:6vw;;white-space:nowrap;\">接下来请选择翻页元素</div>', function () {
+    //         $('.main').mask('<div style=\"color:deeppink;font-size:6vw;;white-space:nowrap;\">如无需翻页，请直接下一步</div>', function () {
+    //             $("#mainiframe").contents().find('html,body').animate({scrollTop: $("#mainiframe").contents().find(".page_num a").offset().top - $("#mainiframe").height() * 0.5}, 300);
+    //             $("#mainiframe").contents().find(".page_num a").css('outline', 'solid 10px #677CFF');
+    //         }, 2000, false, false);
+    //     }, 2000, false, false);
+    // }
 
-        $('.main').mask('<div style=\"color:deeppink;font-size:6vw;;white-space:nowrap;\">接下来请选择翻页元素</div>', function () {
-            $('.main').mask('<div style=\"color:deeppink;font-size:6vw;;white-space:nowrap;\">如无需翻页，请直接下一步</div>', function () {
-                $("#mainiframe").contents().find('html,body').animate({scrollTop: $("#mainiframe").contents().find(".page_num a").offset().top - $("#mainiframe").height() * 0.5}, 300);
-                $("#mainiframe").contents().find(".page_num a").css('outline', 'solid 10px #677CFF');
-            }, 2000, false, false);
-        }, 2000, false, false);
-    }
+    // /**
+    //  * 进入第三步
+    //  */
+    // function step3() {
+    //     console.log("step3");
+    //     $("#btn-next").attr("onclick", "step4();");
+    //     $(".fl-table tbody").html("");
+    //     $("#mainiframe").contents().find($("#targetSelector").val()).each(function () {
+    //         console.log($(this).text());
+    //         console.log($(this).attr("href"));
+    //         $(".fl-table tbody").append('<tr class="nobackground"><td>' + $(this).text() + '</td><td style="text-align: left">' + $(this).attr("href") + '</td></tr>');
+    //     });
+    //
+    //     // $("#selector").val(path);
+    //     var h = $(".table-wrapper").height();
+    //     if ($(".table-wrapper").height() > $(window).height() * 0.7) {
+    //         h = $(window).height() * 0.7;
+    //     }
+    //     $('.main').mask('<div style=\"height:' + h + 'px;overflow-y: auto;\">' + $(".table-wrapper").html() + '</div>', "x", "x", false, false);
+    //     $(".rhui-mask-content thead").prepend("<tr><th style='background-color: #FF5E52' colspan=\"2\">请选择一个链接，然后确定</th></tr>");
+    //
+    //     $('tr:gt(0)').mouseover(function () {
+    //         $(this).addClass('tr_hover');      //通过jQuery控制实现鼠标悬停上的背景色，无视标题行用:gt(0)
+    //     }).mouseout(function () {
+    //         $(this).removeClass('tr_hover');   //通过jQuery控制实现鼠标悬停上的背景色
+    //     });
+    //     $('tr:gt(0)').click(function () {
+    //         $('tr:gt(0).tr-click').removeClass('tr-click');
+    //         $(this).addClass('tr-click');
+    //         $("#sampleUrl").val($(this).find("td:eq(1)").text());
+    //     });
+    //
+    // }
 
-    /**
-     * 进入第三步
-     */
-    function step3() {
-        console.log("step3");
-        $("#btn-next").attr("onclick", "step4();");
-        $(".fl-table tbody").html("");
-        $("#mainiframe").contents().find($("#targetSelector").val()).each(function () {
-            console.log($(this).text());
-            console.log($(this).attr("href"));
-            $(".fl-table tbody").append('<tr class="nobackground"><td>' + $(this).text() + '</td><td style="text-align: left">' + $(this).attr("href") + '</td></tr>');
+    // /**
+    //  * 进入第四步
+    //  */
+    // function step4() {
+    //     console.log("step4");
+    //     console.log("目标select：" + $("#targetSelector").val());
+    //     console.log("翻页select：" + $("#pageSelector").val());
+    //     console.log("样本select：" + $("#sampleUrl").val());
+    //     $("#post-detail").submit();
+    // }
+
+
+    nextstep = function () {
+        alert("跳到下一步");
+        var body = {};
+        map.forEach(function (v, k) {
+            let list = [];
+            v.forEach(function (i) {
+                console.log(i);
+                list[list.length == 0 ? 0 : list.length + 1] = i;
+            });
+            body[k] = list;
         });
 
-        // $("#selector").val(path);
-        var h = $(".table-wrapper").height();
-        if ($(".table-wrapper").height() > $(window).height() * 0.7) {
-            h = $(window).height() * 0.7;
-        }
-        $('.main').mask('<div style=\"height:' + h + 'px;overflow-y: auto;\">' + $(".table-wrapper").html() + '</div>', "x", "x", false, false);
-        $(".rhui-mask-content thead").prepend("<tr><th style='background-color: #FF5E52' colspan=\"2\">请选择一个链接，然后确定</th></tr>");
 
-        $('tr:gt(0)').mouseover(function () {
-            $(this).addClass('tr_hover');      //通过jQuery控制实现鼠标悬停上的背景色，无视标题行用:gt(0)
-        }).mouseout(function () {
-            $(this).removeClass('tr_hover');   //通过jQuery控制实现鼠标悬停上的背景色
+        $.ajax({
+            contentType: 'application/json',
+            type: 'POST',
+            url: "/docrawler",
+            data: JSON.stringify(body),
+            // data: body,
+            // success: function (message) {
+            //     if (message.err.code)
+            //         alert(message.err.code);
+            //     if (message.err.code) {
+            //         alert(message.err.code);
+            //     }
+            //
+            // },
+            // error: function (message) {
+            //     console.log(message);
+            //     alert("提交数据失败！888" + message);
+            //
+            // }
         });
-        $('tr:gt(0)').click(function () {
-            $('tr:gt(0).tr-click').removeClass('tr-click');
-            $(this).addClass('tr-click');
-            $("#sampleUrl").val($(this).find("td:eq(1)").text());
-        });
-
     }
 
-    /**
-     * 进入第四步
-     */
-    function step4() {
-        console.log("step4");
-        console.log("目标select：" + $("#targetSelector").val());
-        console.log("翻页select：" + $("#pageSelector").val());
-        console.log("样本select：" + $("#sampleUrl").val());
-        $("#post-detail").submit();
-    }
+
+    var map = new Map();
+
 
 </script>
 </body>
