@@ -1,6 +1,7 @@
 package me.kagura.kcrawler.controller;
 
 import me.kagura.JJsoup;
+import me.kagura.kcrawler.service.CrawlerService;
 import org.jsoup.helper.Validate;
 import org.jsoup.nodes.Attribute;
 import org.jsoup.nodes.Attributes;
@@ -21,6 +22,8 @@ public class IndexController {
 
     @Autowired
     JJsoup jJsoup;
+    @Autowired
+    CrawlerService crawlerService;
 
 
     public static Document convertToAbsUrlDocument(Document document) {
@@ -145,12 +148,14 @@ public class IndexController {
         model.addAttribute("url", url);
         return "select-detail";
     }
+
     @PostMapping("/docrawler")
     @ResponseBody
-    public  String selectDetail2(
+    public String selectDetail2(
             @RequestBody String body
     ) throws IOException {
         System.err.println(body);
+//        crawlerService.doCrawler(body);
         return "200";
     }
 
