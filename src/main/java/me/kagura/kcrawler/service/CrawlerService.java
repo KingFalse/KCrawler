@@ -2,6 +2,10 @@ package me.kagura.kcrawler.service;
 
 import me.kagura.JJsoup;
 import me.kagura.kcrawler.entity.CrawlerTask;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.jsoup.Connection;
 import org.jsoup.helper.StringUtil;
 import org.jsoup.nodes.Document;
@@ -9,6 +13,8 @@ import org.jsoup.select.Elements;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -24,7 +30,7 @@ public class CrawlerService {
     public void doCrawler(CrawlerTask task) {
         //用于存储需要爬取的url
         List<String> listTargetUrls = getTargetUrls(task);
-
+        doCrawler(task,listTargetUrls);
     }
 
     public List<String> doCrawler(CrawlerTask task, List<String> listTargetUrls) {
@@ -63,9 +69,16 @@ public class CrawlerService {
         }
         executorService.shutdown();
 
-        for (Future<String[]> future : futures) {
+
+        Workbook wb = new HSSFWorkbook();
+        Sheet sheet = wb.createSheet("KCrawler爬取结果");
+        for (int i = 0; i < futures.length; i++) {
             try {
-                String[] vals = future.get();
+                String[] vals = futures[i].get();
+                Row row = sheet.createRow(i);
+                for (int i1 = 0; i1 < vals.length; i1++) {
+                    row.createCell(i1).setCellValue(vals[i1]);
+                }
             } catch (InterruptedException e) {
                 e.printStackTrace();
             } catch (ExecutionException e) {
@@ -73,6 +86,18 @@ public class CrawlerService {
             }
         }
 
+        try {
+            FileOutputStream out = new FileOutputStream(task.getTraceId()+".xls");
+            wb.write(out);
+            out.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        System.err.println("=================================================");
+        System.err.println("爬取完成！");
 
         return null;
 

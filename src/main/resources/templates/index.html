@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>k-crawler</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            font-family: PingFang SC;
+        }
+
+        .wrapper {
+            width: 100%;
+            margin: 0 auto;
+        }
+
+        body {
+            background: #fff;
+            font-family: 'PingFang SC', "Microsoft YaHei", 'Helvetica Neue', Helvetica, STHeitiSC-Light, WOL_SB, 'Segoe UI Semibold', 'Segoe UI', Tahoma, Helvetica, sans-serif;
+            -moz-osx-font-smoothing: grayscale;
+            text-rendering: optimizelegibility;
+            -webkit-font-smoothing: antialiased;
+            min-width: 1160px;
+        }
+
+        a, span, p {
+            font-size: 14px;
+            color: #2A3541;
+            text-decoration: none;
+            display: inline-block;
+            margin: 0;
+            padding: 0;
+            vertical-align: super;
+        }
+
+        a:hover, span:hover, p:hover {
+            text-decoration: none;
+            color: #2A3541;
+        }
+
+        @supports (-webkit-filter: blur(20px)) or (-moz-filter: blur(20px)) {
+            body {
+                overflow: hidden;
+                z-index: 1;
+                box-sizing: border-box;
+            }
+
+            body::before {
+                content: '';
+                position: absolute;
+                top: -30px;
+                left: 0;
+                right: 0;
+                height: 100%;
+                z-index: -1;
+                -webkit-filter: blur(20px);
+                -moz-filter: blur(20px);
+                -ms-filter: blur(20px);
+                -o-filter: blur(20px);
+                filter: blur(20px);
+                margin-top: 30px;
+                background-image: url(https://www.kagura.me/wp-content/uploads/2018/10/69d0dfa874a431d2db82f44164c95ea9.jpg);
+                background-position: center top;
+                background-size: cover;
+                background-attachment: fixed;
+            }
+
+        }
+
+        #startCrawl {
+            margin-top: 150px;
+        }
+
+        #startCrawl .title {
+            height: 40px;
+            width: 100%;
+            color: #ffffff;
+            text-align: center;
+            font-weight: 200;
+            display: block;
+            font-size: 36px;
+            line-height: 1em;
+            margin-bottom: 20px;
+        }
+
+        #startCrawl .inputBox {
+            width: 1008px;
+            height: 62px;
+            margin: 72px auto 50px;
+            border-radius: 2px;
+            background-color: #ffffff;
+            box-shadow: 0 5px 20px 0 rgba(66, 133, 244, 0.15);
+            border: solid 1px #4285F4;
+        }
+
+        #startCrawl .inputBox input {
+            display: inline-block;
+            _zoom: 1;
+            _display: inline-block;
+            *display: inline;
+            color: #ccc;
+            height: 60px;
+            width: 843px;
+            border: none;
+            outline: none;
+            border-radius: 2px;
+            padding-left: 20px;
+            box-sizing: border-box;
+            position: relative;
+            top: -1px;
+            height: 60px;
+            height: 60px \0;
+            height: 51px \9;
+            line-height: 51px \9;
+            position: relative \9;
+            top: -5px \0;
+            top: -8px \9;
+            font-size: 14px;
+        }
+
+        #startCrawl .inputBox input::-webkit-input-placeholder {
+            color: #0A1220;
+            opacity: .46;
+        }
+
+        #startCrawl .inputBox span {
+            display: inline-block;
+            _zoom: 1;
+            _display: inline-block;
+            *display: inline;
+            height: 100%;
+            width: 165px;
+            font-size: 16px;
+            background: #4285F4;
+            border: none;
+            border-radius: 0 2px 2px 0;
+            font-weight: 400;
+            line-height: 62px;
+            color: #fff;
+            text-align: center;
+            cursor: pointer;
+            vertical-align: initial;
+        }
+
+        #startCrawl .more {
+            text-align: center;
+            height: 20px;
+            line-height: 20px;
+            font-size: 14px;
+        }
+
+        #startCrawl .more a {
+            cursor: pointer;
+            color: #4285F4;
+        }
+
+    </style>
+    <script src="https://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+</head>
+<body>
+<input id="traceId" th:value="${traceId}" type="hidden">
+<div class="wrapper" id="startCrawl">
+    <div class="content">
+        <div class="title">开始您的云爬虫体验</div>
+        <div class="inputBox"><input style="color: rgb(204, 204, 204);" type="text" value="请输入您想爬取的网页链接！"/><span
+                class="button">开始爬取</span></div>
+        <div class="more"><a href="./product.html">想要了解更多 &gt;</a></div>
+    </div>
+</div>
+</body>
+<script lang="javascript">
+    /**
+     * 判断IE
+     * @returns {boolean}
+     */
+    function isIE() {
+        if (!!window.ActiveXObject || "ActiveXObject" in window) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * 跳转到下一个页面
+     */
+    function doSelect(url) {
+
+        window.location.href = "/select?traceId=" + $("#traceId").val() + "&url=" + url;
+    }
+
+
+    /**
+     * 输入框及按钮的事件控制
+     * @type {jQuery|HTMLElement}
+     */
+    var input = $("#startCrawl .inputBox input");
+    input.on("focus", function () {
+        input.val("").css({color: "#000"})
+    }),
+        input.on("blur", function () {
+            "" == input.val() ? input.css({color: "#ccc"}).val("请输入您想爬取的网页链接") : input.css({color: "#000"})
+        }), input.on("keyup", function (ev) {
+        if (13 == ev.keyCode) {
+            if ("" == ev.target.value.replace(/\s+/g, "") || ev.target.value.replace(/\s+/g, "") == "请输入您想爬取的网页链接".replace(/\s+/g, "") || ev.target.value.replace(/\s+/g, "") == "网址不能为空".replace(/\s+/g, "")) return void input.val("网址不能为空");
+            window.isIE ? alert("监测到浏览器版本过低，请升级浏览器后试用") : i(ev.target.value)
+        }
+    }), $("#startCrawl .inputBox .button").on("click", function () {
+        return "" == input.val().replace(/\s+/g, "") || input.val().replace(/\s+/g, "") == "请输入您想爬取的网页链接".replace(/\s+/g, "") || input.val().replace(/\s+/g, "") == "网址不能为空".replace(/\s+/g, "") ? void input.val("网址不能为空") : void (isIE() ? alert("监测到浏览器版本过低，请升级浏览器后试用") : doSelect(input.val()))
+    })
+</script>
+</html>

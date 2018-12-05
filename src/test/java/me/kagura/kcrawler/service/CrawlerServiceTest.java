@@ -1,13 +1,12 @@
 package me.kagura.kcrawler.service;
 
+import com.alibaba.fastjson.JSON;
 import me.kagura.kcrawler.entity.CrawlerTask;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
-
-import static org.junit.Assert.*;
 
 @SpringBootTest
 @RunWith(SpringRunner.class)
@@ -19,7 +18,12 @@ public class CrawlerServiceTest {
     @Test
     public void doCrawler() {
 
-        CrawlerTask crawlerTask = new CrawlerTask();
+
+        String json = "{\"targetSelector\":\"\",\"pageSelector\":\"\",\"targetPageType\":\"0\",\"targetPageCount\":\"1\",\"startUrl\":\"https://www.jb51.net/softs/62027.html\",\"targetNodes\":{\"div#page div#mainBody dl#param dt#main h1\":[\"text\",\"code\"],\"div#page div#mainBody div.wrap970.bgf.clearfix div.w750.fl dl#content dd#soft-info div.main-info div#soft-intro p\":[\"text\",\"code\"]}}\n";
+
+        CrawlerTask crawlerTask = JSON.parseObject(json,CrawlerTask.class);
+
+//        CrawlerTask crawlerTask = new CrawlerTask();
 //        crawlerTask.setStartUrl("https://www.kagura.me/");
 //        crawlerTask.setPageSelector("li.next-page a");
 //        crawlerTask.setTargetSelector("article header h2 a");

@@ -4,12 +4,21 @@ import java.util.Map;
 
 public class CrawlerTask {
 
+    private String traceId;
     private String targetSelector;
     private String pageSelector;
     private String targetPageType;
     private int targetPageCount;
     private String startUrl;
     private Map<String, String[]> targetNodes;
+
+    public String getTraceId() {
+        return traceId;
+    }
+
+    public void setTraceId(String traceId) {
+        this.traceId = traceId;
+    }
 
     public Map<String, String[]> getTargetNodes() {
         return targetNodes;

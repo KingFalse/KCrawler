@@ -665,26 +665,31 @@
 <div class="header">
     <ul class="content">
         <li>
-            <input type="button" class="btn" value="返回">
+            <input class="btn" type="button" value="返回">
         </li>
+        <li style="width: 80%;text-align: center">qwe</li>
         <li class="right">
-            <input id="btn-next" onclick="step1();" type="button" class="btn" value="下一步">
+            <input class="btn" id="btn-next" onclick="step1();" type="button" value="下一步">
         </li>
     </ul>
     <!--临时变量，记录当前被点击的cssSelector-->
-    <input id="selector" value="" type="hidden">
-    <form id="post-detail" action="/select/detail" method="post">
+    <input id="selector" type="hidden" value="">
+    <form action="/select/detail" id="post-detail" method="post">
         <!--记录要爬取的链接-->
-        <input id="targetSelector" name="targetSelector" value="" type="hidden">
+        <input id="targetSelector" name="targetSelector" type="hidden" value="">
         <!--记录要翻页的链接-->
-        <input id="pageSelector" name="pageSelector" value="" type="hidden">
+        <input id="pageSelector" name="pageSelector" type="hidden" value="">
         <!--记录样本页面链接-->
-        <input id="sampleUrl" name="sampleUrl" value="" type="hidden">
+        <input id="sampleUrl" name="sampleUrl" type="hidden" th:value="${url}">
+        <!--记录主页面链接-->
+        <input id="mainUrl" name="mainUrl" type="hidden" th:value="${url}">
+        <!--记录traceId-->
+        <input id="traceId" name="traceId" th:value="${traceId}" type="hidden">
     </form>
 </div>
 <div class="main">
-    <iframe id="mainiframe" name="mainiframe" width="100%" height="1000px" src="" th:srcdoc="${srcdoc}" frameborder="0"
-            scrolling="auto" onload="kinit();"></iframe>
+    <iframe frameborder="0" height="1000px" id="mainiframe" name="mainiframe" onload="kinit();" scrolling="auto" src=""
+            th:srcdoc="${srcdoc}" width="100%"></iframe>
 </div>
 
 
@@ -801,8 +806,7 @@
             //去除为纯数字的class
             path = path.replace(new RegExp(/\.[\d]+/), '');
             return path;
-        };
-
+        }
         changeFrameHeight();
 
         $('.main').mask('<div style=\"color:deeppink;font-size:6vw;;white-space:nowrap;\">请点选需要抓取的超链接</div>', function () {
@@ -825,7 +829,7 @@
 
     window.onresize = function () {
         changeFrameHeight();
-    }
+    };
     $(function () {
         changeFrameHeight();
     });
@@ -869,6 +873,10 @@
             console.log($(this).attr("href"));
             $(".fl-table tbody").append('<tr class="nobackground"><td>' + $(this).text() + '</td><td style="text-align: left">' + $(this).attr("href") + '</td></tr>');
         });
+
+        if ($("#targetSelector").val()==""){
+            return step4();
+        }
 
         // $("#selector").val(path);
         var h = $(".table-wrapper").height();

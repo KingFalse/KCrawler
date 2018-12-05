@@ -678,11 +678,15 @@
     <input id="selector" type="hidden" value="">
     <form action="/select/detail" id="post-detail" method="post">
         <!--记录要爬取的链接-->
-        <input id="targetSelector" name="targetSelector" type="hidden" value="">
+        <input id="targetSelector" name="targetSelector" type="hidden" th:value="${targetSelector}">
         <!--记录要翻页的链接-->
-        <input id="pageSelector" name="pageSelector" type="hidden" value="">
+        <input id="pageSelector" name="pageSelector" type="hidden" th:value="${pageSelector}">
         <!--记录样本页面链接-->
-        <input id="sampleUrl" name="sampleUrl" th:value="${url}" type="hidden">
+        <input id="sampleUrl" name="sampleUrl" type="hidden" th:value="${sampleUrl}">
+        <!--记录主页面链接-->
+        <input id="mainUrl" name="mainUrl" type="hidden" th:value="${mainUrl}">
+        <!--记录traceId-->
+        <input id="traceId" name="traceId" type="hidden" th:value="${traceId}">
     </form>
 </div>
 <div class="main">
@@ -1107,14 +1111,13 @@
 
 
     doCrawler = function () {
-        alert("开始爬取");
-
         var body = {};
         body.targetSelector = $("#targetSelector").val();
         body.pageSelector = $("#targetSelector").val();
         body.targetPageType = $("#targetPageType").val();
         body.targetPageCount = $("#targetPageCount").val();
-        body.startUrl = $("#sampleUrl").val();
+        body.startUrl = $("#mainUrl").val();
+        body.traceId = $("#traceId").val();
 
         var targetNodes = {};
 

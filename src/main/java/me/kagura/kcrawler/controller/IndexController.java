@@ -1,6 +1,8 @@
 package me.kagura.kcrawler.controller;
 
+import com.alibaba.fastjson.JSON;
 import me.kagura.JJsoup;
+import me.kagura.kcrawler.entity.CrawlerTask;
 import me.kagura.kcrawler.service.CrawlerService;
 import org.jsoup.helper.Validate;
 import org.jsoup.nodes.Attribute;
@@ -11,11 +13,15 @@ import org.jsoup.select.Elements;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 @Controller
 public class IndexController {
@@ -24,7 +30,6 @@ public class IndexController {
     JJsoup jJsoup;
     @Autowired
     CrawlerService crawlerService;
-
 
     public static Document convertToAbsUrlDocument(Document document) {
         Validate.notEmpty(document.baseUri(), "document.baseUri() must not be empty");
@@ -77,10 +82,11 @@ public class IndexController {
 //            }
             Attributes attributes = img.attributes();
             for (Attribute attribute : attributes) {
-                if (attribute.getKey().equals("src")) {
+                if (attribute.getKey().equals("src") || attribute.getValue() == null) {
                     continue;
                 }
                 //判断该属性是否是图片链接
+                System.err.println(attribute.getValue());
                 if (attribute.getValue().matches("^[\\d\\D]*(\\.gif|\\.jpeg|\\.png|\\.jpg|\\.bmp)$")) {
                     img.attr("src", img.attr("abs:" + attribute.getKey()));
                     break;
@@ -92,21 +98,24 @@ public class IndexController {
         return document;
     }
 
-
-    @GetMapping("/index/index")
-    public String index() {
-        return "/index22";
+    /**
+     * 主入口
+     *
+     * @return
+     */
+    @GetMapping("/index")
+    public String index(Model model) {
+        model.addAttribute("traceId", UUID.randomUUID().toString());
+        return "index";
     }
 
     @GetMapping("/select")
-    public String select(
-            Model model
-    ) throws IOException {
+    public String select(Model model, String traceId, String url) throws IOException {
 //        String url = "http://sports.sohu.com/s2015/chuangye/";
 //        String url = "http://sports.qq.com/articleList/rolls/";
 //        String url = "https://news.qq.com";
-//        String url = "https://www.kagura.me";
-        String url = "https://www.ithome.com";
+//        url = "https://www.kagura.me";
+//        String url = "https://www.ithome.com";
 //        String url = "https://anqing.meituan.com";
 //        String url = "https://www.oschina.net";
         Document document = jJsoup.connect(url).get();
@@ -115,47 +124,39 @@ public class IndexController {
         document.select("script").remove();
         model.addAttribute("srcdoc", document.html());
         model.addAttribute("url", url);
+        model.addAttribute("traceId", traceId);
         return "select";
     }
 
     @PostMapping("/select/detail")
     public String selectDetail(
             Model model,
-            @RequestParam String targetSelector,
-            @RequestParam String pageSelector,
-            @RequestParam String sampleUrl
+            String targetSelector,
+            String pageSelector,
+            String sampleUrl,
+            String mainUrl,
+            String traceId
     ) throws IOException {
-        String url = "https://www.ithome.com/0/395/763.htm";
-        Document document = jJsoup.connect(url).get();
+        Document document = jJsoup.connect(sampleUrl).get();
         convertToAbsUrlDocument(document);
         lazyloadImage(document);
         document.select("script").remove();
         model.addAttribute("srcdoc", document.html());
-        model.addAttribute("url", url);
-        return "select";
-    }
-
-    @GetMapping("/select/detail")
-    public String selectDetail2(
-            Model model
-    ) throws IOException {
-        String url = "https://www.ithome.com/0/395/763.htm";
-        Document document = jJsoup.connect(url).get();
-        convertToAbsUrlDocument(document);
-        lazyloadImage(document);
-        document.select("script").remove();
-        model.addAttribute("srcdoc", document.html());
-        model.addAttribute("url", url);
+        model.addAttribute("sampleUrl", sampleUrl);
+        model.addAttribute("mainUrl", mainUrl);
+        model.addAttribute("targetSelector", targetSelector);
+        model.addAttribute("pageSelector", pageSelector);
+        model.addAttribute("traceId", traceId);
         return "select-detail";
     }
 
     @PostMapping("/docrawler")
     @ResponseBody
-    public String selectDetail2(
-            @RequestBody String body
+    public String doCrawler(@RequestBody String body
     ) throws IOException {
-        System.err.println(body);
-//        crawlerService.doCrawler(body);
+        System.err.println("爬取："+body);
+        CrawlerTask task = JSON.parseObject(body, CrawlerTask.class);
+        crawlerService.doCrawler(task);
         return "200";
     }
 
