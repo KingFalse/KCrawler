@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>KCrawler-开源云爬虫</title>
+    <link href="/css/index.css" rel="stylesheet" type=text/css>
+    <script src="https://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+    <link href="/css/loading/style.css" rel="stylesheet" type=text/css>
+</head>
+<body>
+<input id="traceId" th:value="${traceId}" type="hidden">
+<div class="wrapper" id="startCrawl">
+    <div class="content">
+        <div class="title">KCrawler正在爬取数据...</div>
+        <div class="loading-box">
+            <svg viewBox="0 0 800 400" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                    <line class="mark" fill="none" stroke="#ee695a" stroke-linecap="none" stroke-miterlimit="10"
+                          stroke-width="12" x1="0" x2="0"
+                          y1="0" y2="0"/>
+                </defs>
+                <g class="container1"/>
+                <g class="container2"/>
+
+            </svg>
+            <script src="/js/loading/TweenMax.min.js"></script>
+            <script src="/js/loading/index.js"></script>
+        </div>
+        <div class="more"><a href="./product.html">想要了解更多 &gt;</a></div>
+    </div>
+</div>
+</body>
+<script lang="javascript">
+    $(function () {
+        //循环执行，每隔1秒钟执行一次 1000
+        var time = window.setInterval(refreshCount, 1000);
+
+        function refreshCount() {
+            console.log("ready");
+        }
+
+        // //去掉定时器的方法
+        // window.clearInterval(time);
+    });
+</script>
+</html>
