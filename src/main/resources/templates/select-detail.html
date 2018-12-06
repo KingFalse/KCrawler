@@ -2,667 +2,14 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
-    <style>
-        * {
-            padding: 0;
-            margin: 0;
-            border-width: 0;
-            font-family: PingFang SC;
-        }
+    <title>KCrawler-开源云爬虫</title>
 
-        html, body {
-            height: 100%;
-        }
-
-        .content {
-            overflow: hidden;
-        }
-
-        li,
-        .content li {
-            float: left;
-            list-style: none;
-        }
-
-        .right,
-        .content .right {
-            float: right;
-        }
-
-        @supports (-webkit-filter: blur(20px)) or (-moz-filter: blur(20px)) {
-            .header {
-                overflow: hidden;
-                z-index: 1;
-                box-sizing: border-box;
-            }
-
-            .header::before {
-                content: '';
-                position: absolute;
-                top: -30px;
-                left: 0;
-                right: 0;
-                height: 75px;
-                z-index: -1;
-                -webkit-filter: blur(20px);
-                -moz-filter: blur(20px);
-                -ms-filter: blur(20px);
-                -o-filter: blur(20px);
-                filter: blur(20px);
-                margin-top: 30px;
-                background-image: url(https://www.kagura.me/wp-content/uploads/2018/10/69d0dfa874a431d2db82f44164c95ea9.jpg);
-                background-position: center top;
-                background-size: cover;
-                background-attachment: fixed;
-            }
-
-        }
-
-        .btn {
-            display: inline-block;
-            padding: 6px 6px 6px 6px;
-            font-size: 14px;
-            font-weight: normal;
-            line-height: 1.42857143;
-            text-align: center;
-            white-space: nowrap;
-            vertical-align: middle;
-            cursor: pointer;
-            -webkit-user-select: none;
-            -moz-user-select: none;
-            -ms-user-select: none;
-            user-select: none;
-            border-width: 0px;
-            box-shadow: none;
-            width: 70px;
-            background-color: #FF5E52;
-            color: #fff;
-            opacity: 0.85;
-            margin: 20px;
-            outline: none;
-
-        }
-
-        .btn:hover,
-        .btn:focus {
-            opacity: 1
-        }
-    </style>
-    <style type="text/css">
-        /* Table Styles */
-
-        .table-wrapper {
-            margin: 10px 70px 70px;
-            box-shadow: 0px 35px 50px rgba(0, 0, 0, 0.2);
-        }
-
-        .fl-table {
-            border-radius: 5px;
-            font-size: 1vw;
-            font-weight: normal;
-            border: none;
-            border-collapse: collapse;
-            width: 100%;
-            max-width: 100%;
-            white-space: nowrap;
-            background-color: white;
-        }
-
-        .fl-table td, .fl-table th {
-            text-align: center;
-            padding: 8px;
-        }
-
-        .fl-table td {
-            border-right: 1px solid #f8f8f8;
-            font-size: 1vw;
-        }
-
-        .fl-table thead th {
-            color: #ffffff;
-            background: #4FC3A1;
-        }
-
-        .fl-table thead th:nth-child(odd) {
-            color: #ffffff;
-            background: #324960;
-        }
-
-        /*偶数行单独背景颜色*/
-        .fl-table tr:not(.nobackground):nth-child(even) {
-            background: #F8F8F8;
-        }
-
-        /* Responsive */
-
-        @media (max-width: 767px) {
-            .fl-table {
-                display: block;
-                width: 100%;
-            }
-
-            .table-wrapper:before {
-                content: "Scroll horizontally >";
-                display: block;
-                text-align: right;
-                /*font-size: 11px;*/
-                font-size: 1vw;
-                color: white;
-                padding: 0 0 10px;
-            }
-
-            .fl-table thead, .fl-table tbody, .fl-table thead th {
-                display: block;
-            }
-
-            .fl-table thead th:last-child {
-                border-bottom: none;
-            }
-
-            .fl-table thead {
-                float: left;
-            }
-
-            .fl-table tbody {
-                width: auto;
-                position: relative;
-                overflow-x: auto;
-            }
-
-            .fl-table td, .fl-table th {
-                padding: 20px .625em .625em .625em;
-                height: 100px;
-                vertical-align: middle;
-                box-sizing: border-box;
-                overflow-x: hidden;
-                overflow-y: auto;
-                width: 40%;
-                font-size: 1vw;
-                text-overflow: ellipsis;
-            }
-
-            .fl-table thead th {
-                text-align: left;
-                border-bottom: 1px solid #f7f7f9;
-            }
-
-            .fl-table tbody tr {
-                display: table-cell;
-            }
-
-            .fl-table tbody tr:nth-child(odd) {
-                background: none;
-            }
-
-            .fl-table tr:nth-child(even) {
-                background: transparent;
-            }
-
-            .fl-table tr td:nth-child(odd) {
-                background: #F8F8F8;
-                border-right: 1px solid #E6E4E4;
-            }
-
-            .fl-table tr td:nth-child(even) {
-                border-right: 1px solid #E6E4E4;
-            }
-
-            .fl-table tbody td {
-                display: block;
-                text-align: center;
-            }
-        }
-
-        /* 鼠标悬停上的背景色 */
-        .tr_hover {
-            background-color: #FF5E52
-        }
-
-        /* 鼠标点击上的背景色 */
-        .tr-click {
-            background-color: #204bff
-        }
-    </style>
-
-    <style type="text/css">
-        /* 遮罩层样式 */
-        .rhui-mask {
-            position: absolute;
-            top: 0;
-            right: 0;
-            bottom: 0;
-            left: 0;
-            z-index: 9000;
-            display: block;
-            margin: 0;
-            padding: 0;
-            border-style: none;
-            background-color: #111;
-            opacity: 0.9;
-            zoom: 1;
-            filter: alpha(opacity=30);
-        }
-
-        /* 遮罩层显示内容样式 */
-        .rhui-mask-content {
-            position: absolute;
-            z-index: 9999;
-            display: block;
-            margin: 0;
-            padding: 15px 20px;
-            letter-spacing: 2px;
-            font-weight: bold;
-            font-size: 15px;
-            -webkit-align-items: center;
-            align-items: center;
-            -webkit-justify-content: center;
-            justify-content: center;
-            transition: all .2s ease;
-            -webkit-transition: all .2s ease;
-            -webkit-animation-duration: 1s;
-            animation-duration: 1s;
-            -webkit-animation-timing-function: linear;
-            animation-timing-function: linear;
-            -webkit-animation-fill-mode: forwards;
-            animation-fill-mode: forwards;
-            -webkit-animation-name: anim-open;
-            animation-name: anim-open
-        }
-    </style>
-    <style type="text/css">
-        /* 动画效果 */
-        @-webkit-keyframes anim-open {
-            0% {
-                opacity: 0;
-                -webkit-transform: matrix3d(.7, 0, 0, 0, 0, .7, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);
-                transform: matrix3d(.7, 0, 0, 0, 0, .7, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1)
-            }
-            2.083333% {
-                -webkit-transform: matrix3d(.75266, 0, 0, 0, 0, .76342, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);
-                transform: matrix3d(.75266, 0, 0, 0, 0, .76342, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1)
-            }
-            4.166667% {
-                -webkit-transform: matrix3d(.81071, 0, 0, 0, 0, .84545, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);
-                transform: matrix3d(.81071, 0, 0, 0, 0, .84545, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1)
-            }
-            6.25% {
-                -webkit-transform: matrix3d(.86808, 0, 0, 0, 0, .9286, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);
-                transform: matrix3d(.86808, 0, 0, 0, 0, .9286, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1)
-            }
-            8.333333% {
-                -webkit-transform: matrix3d(.92038, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);
-                transform: matrix3d(.92038, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1)
-            }
-            10.416667% {
-                -webkit-transform: matrix3d(.96482, 0, 0, 0, 0, 1.05202, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);
-                transform: matrix3d(.96482, 0, 0, 0, 0, 1.05202, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1)
-            }
-            12.5% {
-                -webkit-transform: matrix3d(1, 0, 0, 0, 0, 1.08204, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);
-                transform: matrix3d(1, 0, 0, 0, 0, 1.08204, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1)
-            }
-            14.583333% {
-                -webkit-transform: matrix3d(1.02563, 0, 0, 0, 0, 1.09149, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);
-                transform: matrix3d(1.02563, 0, 0, 0, 0, 1.09149, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1)
-            }
-            16.666667% {
-                -webkit-transform: matrix3d(1.04227, 0, 0, 0, 0, 1.08453, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);
-                transform: matrix3d(1.04227, 0, 0, 0, 0, 1.08453, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1)
-            }
-            18.75% {
-                -webkit-transform: matrix3d(1.05102, 0, 0, 0, 0, 1.06666, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);
-                transform: matrix3d(1.05102, 0, 0, 0, 0, 1.06666, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1)
-            }
-            20.833333% {
-                -webkit-transform: matrix3d(1.05334, 0, 0, 0, 0, 1.04355, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);
-                transform: matrix3d(1.05334, 0, 0, 0, 0, 1.04355, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1)
-            }
-            22.916667% {
-                -webkit-transform: matrix3d(1.05078, 0, 0, 0, 0, 1.02012, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);
-                transform: matrix3d(1.05078, 0, 0, 0, 0, 1.02012, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1)
-            }
-            25% {
-                -webkit-transform: matrix3d(1.04487, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);
-                transform: matrix3d(1.04487, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1)
-            }
-            27.083333% {
-                -webkit-transform: matrix3d(1.03699, 0, 0, 0, 0, .98534, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);
-                transform: matrix3d(1.03699, 0, 0, 0, 0, .98534, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1)
-            }
-            29.166667% {
-                -webkit-transform: matrix3d(1.02831, 0, 0, 0, 0, .97688, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);
-                transform: matrix3d(1.02831, 0, 0, 0, 0, .97688, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1)
-            }
-            31.25% {
-                -webkit-transform: matrix3d(1.01973, 0, 0, 0, 0, .97422, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);
-                transform: matrix3d(1.01973, 0, 0, 0, 0, .97422, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1)
-            }
-            33.333333% {
-                -webkit-transform: matrix3d(1.01191, 0, 0, 0, 0, .97618, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);
-                transform: matrix3d(1.01191, 0, 0, 0, 0, .97618, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1)
-            }
-            35.416667% {
-                -webkit-transform: matrix3d(1.00526, 0, 0, 0, 0, .98122, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);
-                transform: matrix3d(1.00526, 0, 0, 0, 0, .98122, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1)
-            }
-            37.5% {
-                -webkit-transform: matrix3d(1, 0, 0, 0, 0, .98773, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);
-                transform: matrix3d(1, 0, 0, 0, 0, .98773, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1)
-            }
-            39.583333% {
-                -webkit-transform: matrix3d(.99617, 0, 0, 0, 0, .99433, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);
-                transform: matrix3d(.99617, 0, 0, 0, 0, .99433, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1)
-            }
-            41.666667% {
-                -webkit-transform: matrix3d(.99368, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);
-                transform: matrix3d(.99368, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1)
-            }
-            43.75% {
-                -webkit-transform: matrix3d(.99237, 0, 0, 0, 0, 1.00413, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);
-                transform: matrix3d(.99237, 0, 0, 0, 0, 1.00413, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1)
-            }
-            45.833333% {
-                -webkit-transform: matrix3d(.99202, 0, 0, 0, 0, 1.00651, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);
-                transform: matrix3d(.99202, 0, 0, 0, 0, 1.00651, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1)
-            }
-            47.916667% {
-                -webkit-transform: matrix3d(.99241, 0, 0, 0, 0, 1.00726, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);
-                transform: matrix3d(.99241, 0, 0, 0, 0, 1.00726, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1)
-            }
-            50% {
-                opacity: 1;
-                -webkit-transform: matrix3d(.99329, 0, 0, 0, 0, 1.00671, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);
-                transform: matrix3d(.99329, 0, 0, 0, 0, 1.00671, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1)
-            }
-            52.083333% {
-                -webkit-transform: matrix3d(.99447, 0, 0, 0, 0, 1.00529, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);
-                transform: matrix3d(.99447, 0, 0, 0, 0, 1.00529, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1)
-            }
-            54.166667% {
-                -webkit-transform: matrix3d(.99577, 0, 0, 0, 0, 1.00346, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);
-                transform: matrix3d(.99577, 0, 0, 0, 0, 1.00346, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1)
-            }
-            56.25% {
-                -webkit-transform: matrix3d(.99705, 0, 0, 0, 0, 1.0016, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);
-                transform: matrix3d(.99705, 0, 0, 0, 0, 1.0016, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1)
-            }
-            58.333333% {
-                -webkit-transform: matrix3d(.99822, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);
-                transform: matrix3d(.99822, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1)
-            }
-            60.416667% {
-                -webkit-transform: matrix3d(.99921, 0, 0, 0, 0, .99884, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);
-                transform: matrix3d(.99921, 0, 0, 0, 0, .99884, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1)
-            }
-            62.5% {
-                -webkit-transform: matrix3d(1, 0, 0, 0, 0, .99816, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);
-                transform: matrix3d(1, 0, 0, 0, 0, .99816, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1)
-            }
-            64.583333% {
-                -webkit-transform: matrix3d(1.00057, 0, 0, 0, 0, .99795, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);
-                transform: matrix3d(1.00057, 0, 0, 0, 0, .99795, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1)
-            }
-            66.666667% {
-                -webkit-transform: matrix3d(1.00095, 0, 0, 0, 0, .99811, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);
-                transform: matrix3d(1.00095, 0, 0, 0, 0, .99811, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1)
-            }
-            68.75% {
-                -webkit-transform: matrix3d(1.00114, 0, 0, 0, 0, .99851, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);
-                transform: matrix3d(1.00114, 0, 0, 0, 0, .99851, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1)
-            }
-            70.833333% {
-                -webkit-transform: matrix3d(1.00119, 0, 0, 0, 0, .99903, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);
-                transform: matrix3d(1.00119, 0, 0, 0, 0, .99903, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1)
-            }
-            72.916667% {
-                -webkit-transform: matrix3d(1.00114, 0, 0, 0, 0, .99955, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);
-                transform: matrix3d(1.00114, 0, 0, 0, 0, .99955, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1)
-            }
-            75% {
-                -webkit-transform: matrix3d(1.001, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);
-                transform: matrix3d(1.001, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1)
-            }
-            77.083333% {
-                -webkit-transform: matrix3d(1.00083, 0, 0, 0, 0, 1.00033, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);
-                transform: matrix3d(1.00083, 0, 0, 0, 0, 1.00033, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1)
-            }
-            79.166667% {
-                -webkit-transform: matrix3d(1.00063, 0, 0, 0, 0, 1.00052, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);
-                transform: matrix3d(1.00063, 0, 0, 0, 0, 1.00052, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1)
-            }
-            81.25% {
-                -webkit-transform: matrix3d(1.00044, 0, 0, 0, 0, 1.00058, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);
-                transform: matrix3d(1.00044, 0, 0, 0, 0, 1.00058, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1)
-            }
-            83.333333% {
-                -webkit-transform: matrix3d(1.00027, 0, 0, 0, 0, 1.00053, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);
-                transform: matrix3d(1.00027, 0, 0, 0, 0, 1.00053, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1)
-            }
-            85.416667% {
-                -webkit-transform: matrix3d(1.00012, 0, 0, 0, 0, 1.00042, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);
-                transform: matrix3d(1.00012, 0, 0, 0, 0, 1.00042, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1)
-            }
-            87.5% {
-                -webkit-transform: matrix3d(1, 0, 0, 0, 0, 1.00027, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);
-                transform: matrix3d(1, 0, 0, 0, 0, 1.00027, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1)
-            }
-            89.583333% {
-                -webkit-transform: matrix3d(.99991, 0, 0, 0, 0, 1.00013, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);
-                transform: matrix3d(.99991, 0, 0, 0, 0, 1.00013, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1)
-            }
-            91.666667% {
-                -webkit-transform: matrix3d(.99986, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);
-                transform: matrix3d(.99986, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1)
-            }
-            93.75% {
-                -webkit-transform: matrix3d(.99983, 0, 0, 0, 0, .99991, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);
-                transform: matrix3d(.99983, 0, 0, 0, 0, .99991, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1)
-            }
-            95.833333% {
-                -webkit-transform: matrix3d(.99982, 0, 0, 0, 0, .99985, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);
-                transform: matrix3d(.99982, 0, 0, 0, 0, .99985, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1)
-            }
-            97.916667% {
-                -webkit-transform: matrix3d(.99983, 0, 0, 0, 0, .99984, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);
-                transform: matrix3d(.99983, 0, 0, 0, 0, .99984, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1)
-            }
-            100% {
-                opacity: 1;
-                -webkit-transform: matrix3d(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);
-                transform: matrix3d(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1)
-            }
-        }
-
-        @-webkit-keyframes anim-close {
-            0% {
-                opacity: 1
-            }
-            100% {
-                opacity: 0;
-                -webkit-transform: scale3d(.8, .8, 1)
-            }
-        }
-    </style>
-
+    <link href="/css/select.css" rel="stylesheet" type=text/css>
     <script src="http://libs.baidu.com/jquery/2.0.0/jquery.min.js"></script>
     <link href="http://www.semantic-ui.cn/dist/semantic.min.css" rel="stylesheet" type="text/css">
     <script src="http://www.semantic-ui.cn/dist/semantic.min.js"></script>
-    <script type="text/javascript">
-        $.fn.extend({
-            /**
-             * 给元素添加遮罩层
-             * @param  message  {String}  [可选]遮罩层显示内容
-             */
-            mask: function (message, callback, timeout, flag, isclickclose) {
-                if (!isclickclose) {
-                    $(".rhui-mask").unbind();
-                }
-                var $target = this,
-                    fixed = false,
-                    targetStatic = true;
-
-                if (Object.prototype.toString.call(message) !== '[object String]' || !message) {
-                    //如果message为空或者不是字符串，则用默认的消息提示。
-                    message = '请稍候。。。';
-                }
-
-                if ($target.length === 0) {
-                    $target = $('body');
-                } else {
-                    if ($target.length > 1) {
-                        $target = $target.first();
-                    }
-
-                    if ($target[0] === window || $target[0] === document) {
-                        $target = $('body');
-                    }
-                }
-
-                if ($target[0] === document.body) {
-                    fixed = true;
-                }
-
-                //如果目标元素已经有遮罩层，获取遮罩层
-                var old = $target.data('rhui.mask');
-                if (old) {
-                    old.$content.html(message);
-                    center($target, old.$content, fixed);
-
-                    if (!isNaN(timeout)) {
-                        var p = setTimeout(function () {
-                            $target.unmask(callback);
-                        }, timeout);
-                    }
-                    return;
-                }
-
-                //如果被遮盖的元素是static，把元素改成relative
-                if ($target.css('position') === 'static') {
-                    targetStatic = true;
-                    $target.css('position', 'relative');
-                }
-
-                var $content, $overlay;
-                if (fixed) {
-                    $overlay = $('<div class="rhui-mask" style="position:fixed;"></div>');
-                    $content = $('<div class="rhui-mask-content" style="position:fixed;">' + message + '</div>');
-                } else {
-                    $overlay = $('<div class="rhui-mask"></div>');
-                    $content = $('<div class="rhui-mask-content">' + message + '</div>');
-                }
-
-                $overlay.appendTo($target);
-                $content.appendTo($target);
-
-                //显示遮罩层
-                $overlay.show();
-                $content.show();
-
-                //让遮罩层居中
-                center($target, $content, fixed);
-
-                //把遮罩层信息添加到$target
-                $target.data('rhui.mask', {
-                    fixed: fixed,
-                    $overlay: $overlay,
-                    $content: $content,
-                    targetStatic: targetStatic
-                });
-
-                /**
-                 * 让遮罩层内容居中显示
-                 * @param  $target   被遮盖的元素
-                 * @param  $content  遮罩层内容元素
-                 * @param  fixed     遮罩层是否固定显示
-                 */
-                function center($target, $content, fixed) {
-                    var $window,
-                        height = $content.outerHeight(true),
-                        width = $content.outerWidth(true);
-
-                    if (fixed) {
-                        //如果遮罩层固定显示，让遮罩层在window居中
-                        $window = $(window);
-                        $content.css({
-                            left: ($window.width() - width) / 2,
-                            top: ($window.height() - height) / 2
-                        });
-                    } else {
-                        //让遮罩层在$target中居中
-                        $content.css({
-                            left: ($target.width() - width) / 2,
-                            top: ($target.height() - height) / 2
-                        });
-                    }
-                }
-
-                if (!isNaN(timeout)) {
-                    var p = setTimeout(function () {
-                        $target.unmask(callback);
-                    }, timeout);
-                }
-
-                if (isclickclose) {
-                    //点击遮罩背景自动关闭
-                    $(".rhui-mask").click(function () {
-                        $(".rhui-mask").unbind();
-                        $target.unmask(callback);
-                        if (!isNaN(timeout)) {
-                            clearTimeout(p);
-                        }
-                    });
-                }
-
-                if (flag) {
-                    $("div.header > ul > li.right > input").val("确定");
-                }
-
-
-            },
-
-            /**
-             * 取消遮罩层
-             */
-            unmask: function (callback) {
-                var $target;
-
-                if (this.length === 0) {
-                    $target = $('body');
-                } else {
-                    $target = this.first();
-                    if ($target[0] === window || $target[0] === document) {
-                        $target = $('body');
-                    }
-                }
-
-                var data = $target.data('rhui.mask');
-                if (!data) {
-                    return;
-                }
-
-                //还原目标元素的position属性
-                if (data.targetStatic) {
-                    $target.css('position', 'static');
-                }
-
-                data.$overlay.remove();
-                data.$content.remove();
-
-                $target.removeData('rhui.mask');
-
-                $("#btn-next").val("下一步");
-                $("#btn-next").attr("onclick", "nextstep();");
-
-                //判断并执行回调
-                if ($.isFunction(callback)) {
-                    callback();
-                }
-
-                $("#selector").val("");
-            }
-        });
-    </script>
+    <script src="/js/mask.js"></script>
+    <script src="/js/select.js"></script>
 </head>
 <body>
 <div class="header">
@@ -678,19 +25,20 @@
     <input id="selector" type="hidden" value="">
     <form action="/select/detail" id="post-detail" method="post">
         <!--记录要爬取的链接-->
-        <input id="targetSelector" name="targetSelector" type="hidden" th:value="${targetSelector}">
+        <input id="targetSelector" name="targetSelector" th:value="${targetSelector}" type="hidden">
         <!--记录要翻页的链接-->
-        <input id="pageSelector" name="pageSelector" type="hidden" th:value="${pageSelector}">
+        <input id="pageSelector" name="pageSelector" th:value="${pageSelector}" type="hidden">
         <!--记录样本页面链接-->
-        <input id="sampleUrl" name="sampleUrl" type="hidden" th:value="${sampleUrl}">
+        <input id="sampleUrl" name="sampleUrl" th:value="${sampleUrl}" type="hidden">
         <!--记录主页面链接-->
-        <input id="mainUrl" name="mainUrl" type="hidden" th:value="${mainUrl}">
+        <input id="mainUrl" name="mainUrl" th:value="${mainUrl}" type="hidden">
         <!--记录traceId-->
-        <input id="traceId" name="traceId" type="hidden" th:value="${traceId}">
+        <input id="traceId" name="traceId" th:value="${traceId}" type="hidden">
     </form>
 </div>
 <div class="main">
-    <iframe frameborder="0" height="1000px" id="mainiframe" name="mainiframe" onload="kinit();" scrolling="auto" src=""
+    <iframe frameborder="0" height="1000px" id="mainiframe" name="mainiframe" onload="startInit();" scrolling="auto"
+            src=""
             th:srcdoc="${srcdoc}" width="100%"></iframe>
 </div>
 
@@ -708,40 +56,15 @@
     </table>
 </div>
 <script lang="javascript">
-    function kinit() {
+    function startInit() {
 
-        /**
-         * 取消页面点击事件
-         */
-        $("#mainiframe").contents().find("*").unbind();
-        $("#mainiframe").contents().find("*").click(function (event) {
-            event.preventDefault();
-        });
-        /**
-         * 鼠标进入时自动高亮
-         * @param e
-         */
-        $("#mainiframe").contents().find("*").mouseover(function (e) {
-            var path = getCssPath(e.target);
-
-            console.log("鼠标所在：" + path);
-            $("#mainiframe").contents().find(path).css('outline', 'solid 3px #677CFF');
-        });
-        /**
-         * 鼠标出去时自动取消高亮
-         * @param e
-         */
-        $("#mainiframe").contents().find("*").mouseout(function (e) {
-            var path = getCssPath(e.target);
-
-            console.log("鼠标所在：" + path);
-            $("#mainiframe").contents().find(path).css('outline', '');
-        });
+        pageInit();
         /**
          * 点击元素后输出cssSelector
          * @param ev
          */
         document.getElementById('mainiframe').contentWindow.document.onclick = function (event) {
+            $("#btn-next").show();
             var dom = document.getElementById('mainiframe').contentWindow.document.elementFromPoint(event.clientX, event.clientY);
             var path = getCssPath(dom);
             console.log("被点击的元素：" + path);
@@ -776,7 +99,12 @@
             $('#show-code').text($('#show-code').text().replace("outline: rgb(103, 124, 255) solid 3px;", ""));
             $('#show-code').text($('#show-code').text().replace(" style=\"\"", ""));
             $('#show-text').text($("#mainiframe").contents().find(path).text());
-            $('.main').mask('<div>' + $(".table-wrapper").html() + '</div>', "x", "x", true, true);
+            $("#btn-next").val("确定");
+            $('.main').mask('<div>' + $(".table-wrapper").html() + '</div>', function () {
+                if (map.size <= 0) {
+                    $("#btn-next").hide();
+                }
+            }, "x", true);
             $(".table-wrapper .fl-table tbody").html("");
 
             addToMap = function () {
@@ -790,7 +118,10 @@
                     }
                 });
                 $('.main').unmask();
-            }
+                $("#btn-next").val("下一步");
+                $("#btn-next").attr("onclick", "nextstep();");
+
+            };
 
             $("input[type=checkbox]").change(function () {
                 if ($("#checkbox1").prop("checked") == false && $("#checkbox2").prop("checked") == false) {
@@ -805,57 +136,12 @@
             $("#btn-next").val("确定");
             $("#btn-next").attr("onclick", "addToMap();");
 
+
         };
 
-
-        /**
-         * 获取传入元素的cssSelector
-         * @param dom
-         * @returns {string}
-         */
-        function getCssPath(dom) {
-            var path = '';
-            for (; dom && dom.nodeType == 1; dom = dom.parentNode) {
-                if (dom.tagName == 'BODY') {
-                    break
-                }
-                var index = 1;
-                for (var sib = dom.previousSibling; sib; sib = sib.previousSibling) {
-                    if (sib.nodeType == 1 && sib.tagName == dom.tagName) index++
-                }
-                var xname = '>' + dom.tagName.toLowerCase();
-                if (dom.id) {
-                    xname += '#' + dom.id
-                } else if (dom.className) {
-                    xname += '.' + dom.className.replace(new RegExp(/( )/g), '.')
-                } else {
-                    xname += ''
-                }
-                path = xname + path
-            }
-            if (path.substring(0, 1) == '>') {
-                path = path.replace('>', '')
-            }
-            do {
-                path = path.replace('..', '.')
-            } while (path.indexOf('..') > 0);
-            do {
-                path = path.replace('.>', '>')
-            } while (path.indexOf('.>') > 0);
-            var patt = /\.$/;
-            //如果是以.结尾则删除
-            while (patt.test(path)) {
-                path = path.replace(patt, "")
-            }
-            //把所有的>替换为空格
-            path = path.replace(new RegExp(/(>)/g), ' ');
-
-            //去除为纯数字的class
-            path = path.replace(new RegExp(/\.[\d]+/), '');
-            return path;
-        }
-
         changeFrameHeight();
+
+        $("#btn-next").hide();
 
         // $('.main').mask('<div style=\"color:deeppink;font-size:6vw;;white-space:nowrap;\">请点选需要抓取的超链接</div>', function () {
         //     $('.main').mask('<div style=\"color:deeppink;font-size:6vw;;white-space:nowrap;\">如需抓取本页，请直接下一步</div>', function () {
@@ -866,15 +152,6 @@
     }
 
 
-    /**
-     * 自动调整IFrame高度
-     */
-    function changeFrameHeight() {
-        var ifm = document.getElementById("mainiframe");
-        var h = $(".header").height();
-        ifm.height = document.documentElement.clientHeight - h;
-    }
-
     window.onresize = function () {
         changeFrameHeight();
     };
@@ -883,141 +160,14 @@
     });
 
 
-    // /**
-    //  * 进入第一步
-    //  */
-    // function step1() {
-    //     console.log("step1");
-    //     $("#btn-next").attr("onclick", "step2();");
-    //     $("#targetSelector").val($("#selector").val());
-    //     step2();
-    // }
-
-    // /**
-    //  * 进入第二步
-    //  */
-    // function step2() {
-    //     console.log("step2");
-    //     $("#btn-next").attr("onclick", "step3();");
-    //     $("#pageSelector").val($("#selector").val());
-    //
-    //     $('.main').mask('<div style=\"color:deeppink;font-size:6vw;;white-space:nowrap;\">接下来请选择翻页元素</div>', function () {
-    //         $('.main').mask('<div style=\"color:deeppink;font-size:6vw;;white-space:nowrap;\">如无需翻页，请直接下一步</div>', function () {
-    //             $("#mainiframe").contents().find('html,body').animate({scrollTop: $("#mainiframe").contents().find(".page_num a").offset().top - $("#mainiframe").height() * 0.5}, 300);
-    //             $("#mainiframe").contents().find(".page_num a").css('outline', 'solid 10px #677CFF');
-    //         }, 2000, false, false);
-    //     }, 2000, false, false);
-    // }
-
-    // /**
-    //  * 进入第三步
-    //  */
-    // function step3() {
-    //     console.log("step3");
-    //     $("#btn-next").attr("onclick", "step4();");
-    //     $(".fl-table tbody").html("");
-    //     $("#mainiframe").contents().find($("#targetSelector").val()).each(function () {
-    //         console.log($(this).text());
-    //         console.log($(this).attr("href"));
-    //         $(".fl-table tbody").append('<tr class="nobackground"><td>' + $(this).text() + '</td><td style="text-align: left">' + $(this).attr("href") + '</td></tr>');
-    //     });
-    //
-    //     // $("#selector").val(path);
-    //     var h = $(".table-wrapper").height();
-    //     if ($(".table-wrapper").height() > $(window).height() * 0.7) {
-    //         h = $(window).height() * 0.7;
-    //     }
-    //     $('.main').mask('<div style=\"height:' + h + 'px;overflow-y: auto;\">' + $(".table-wrapper").html() + '</div>', "x", "x", false, false);
-    //     $(".rhui-mask-content thead").prepend("<tr><th style='background-color: #FF5E52' colspan=\"2\">请选择一个链接，然后确定</th></tr>");
-    //
-    //     $('tr:gt(0)').mouseover(function () {
-    //         $(this).addClass('tr_hover');      //通过jQuery控制实现鼠标悬停上的背景色，无视标题行用:gt(0)
-    //     }).mouseout(function () {
-    //         $(this).removeClass('tr_hover');   //通过jQuery控制实现鼠标悬停上的背景色
-    //     });
-    //     $('tr:gt(0)').click(function () {
-    //         $('tr:gt(0).tr-click').removeClass('tr-click');
-    //         $(this).addClass('tr-click');
-    //         $("#sampleUrl").val($(this).find("td:eq(1)").text());
-    //     });
-    //
-    // }
-
-    // /**
-    //  * 进入第四步
-    //  */
-    // function step4() {
-    //     console.log("step4");
-    //     console.log("目标select：" + $("#targetSelector").val());
-    //     console.log("翻页select：" + $("#pageSelector").val());
-    //     console.log("样本select：" + $("#sampleUrl").val());
-    //     $("#post-detail").submit();
-    // }
-
-
-    nextstep = function () {
-        // var body = {};
-        // map.forEach(function (v, k) {
-        //     let list = [];
-        //     v.forEach(function (i) {
-        //         list[list.length] = i;
-        //     });
-        //     body[k] = list;
-        // });
-        // $.ajax({
-        //     contentType: 'application/json',
-        //     type: 'POST',
-        //     url: "/docrawler",
-        //     data: JSON.stringify(body),
-        //     // success: function (message) {
-        //     //     if (message.err.code)
-        //     //         alert(message.err.code);
-        //     //     if (message.err.code) {
-        //     //         alert(message.err.code);
-        //     //     }
-        //     //
-        //     // },
-        //     // error: function (message) {
-        //     //     console.log(message);
-        //     //     alert("提交数据失败！888" + message);
-        //     //
-        //     // }
-        // });
-
-
-        // $("#xxxx .fl-table tbody").html("");
-        // $("#xxxx .fl-table tbody").append(
-        //     '<tr>' +
-        //     '   <td>' +
-        //     '       <div class="ui toggle checkbox">\n' +
-        //     '           <input id="checkbox1" type="checkbox" 2type="text" checked>\n' +
-        //     '           <label></label>\n' +
-        //     '       </div>' +
-        //     '   </td>' +
-        //     '   <td>' +
-        //     '       <div class="ui toggle checkbox">\n' +
-        //     '           <input id="checkbox2" type="checkbox" 2type="code">\n' +
-        //     '           <label></label>\n' +
-        //     '       </div>' +
-        //     '   </td>' +
-        //     '</tr>' +
-        //     '<tr>' +
-        //     '<td><div style="height:' + $(window).height() * 0.5 + 'px;width:' + $(window).width() * 0.4 + 'px"><textarea readonly style="border: none;width: 100%;height: 100%" id="show-code"></textarea></div></td>' +
-        //     '<td><div style="height:' + $(window).height() * 0.5 + 'px;width:' + $(window).width() * 0.4 + 'px"><textarea readonly style="border: none;width: 100%;height: 100%" id="show-text"></textarea></div></td>' +
-        //     '</tr>' +
-        //     '');
-
-        /**
-         * 获取需要解析的字段总数
-         * @returns {number}
-         */
+    function nextstep() {
         getCount = function () {
             let mcount = 0;
             map.forEach(function (v, k) {
                 mcount += v.size;
             });
             return mcount;
-        }
+        };
 
 
         var showdetail = "" +
@@ -1067,50 +217,16 @@
         "    </tbody>\n" +
         "</table>" +
         "";
-        $('.main').mask('<div>' + showdetail + '</div>', "x", "x", true, true);
+        $("#btn-next").val("确定");
+        $('.main').mask('<div>' + showdetail + '</div>', "x", "x", true);
         $("#btn-next").val("开始爬取");
         $("#btn-next").attr("onclick", "doCrawler();");
-
-
-        // $("#show-detail").append("" +
-        //     "<table class=\"fl-table\">\n" +
-        //     "        <thead>\n" +
-        //     "        <tr>\n" +
-        //     "            <th colspan='2'>结果为代码</th>\n" +
-        //     "        </tr>\n" +
-        //     "        </thead>\n" +
-        //     "        <tbody>\n" +
-        //     '<tr>' +
-        //     '   <td>' +
-        //     '       <div class="ui toggle checkbox">\n' +
-        //     '           <input id="checkbox1" type="checkbox" 2type="text" checked>\n' +
-        //     '           <label></label>\n' +
-        //     '       </div>' +
-        //     '   </td>' +
-        //     '   <td>' +
-        //     '       <div class="ui toggle checkbox">\n' +
-        //     '           <input id="checkbox2" type="checkbox" 2type="code">\n' +
-        //     '           <label></label>\n' +
-        //     '       </div>' +
-        //     '   </td>' +
-        //     '</tr>' +
-        //     '<tr>' +
-        //     '<td><div style="height:' + $(window).height() * 0.5 + 'px;width:' + $(window).width() * 0.4 + 'px"><textarea readonly style="border: none;width: 100%;height: 100%" id="show-code"></textarea></div></td>' +
-        //     '<td><div style="height:' + $(window).height() * 0.5 + 'px;width:' + $(window).width() * 0.4 + 'px"><textarea readonly style="border: none;width: 100%;height: 100%" id="show-text"></textarea></div></td>' +
-        //     '</tr>' +
-        //     "        </tbody>\n" +
-        //     "</table>" +
-        //     "");
-        // $("#show-detail").append(
-        //     '');
-        //
-        //
-        // $(".table-wrapper .fl-table tbody").html("");
-
     }
 
-
-    doCrawler = function () {
+    /**
+     * 提交爬取
+     */
+    function doCrawler() {
         var body = {};
         body.targetSelector = $("#targetSelector").val();
         body.pageSelector = $("#targetSelector").val();
@@ -1153,10 +269,7 @@
 
     }
 
-
     var map = new Map();
-
-
 </script>
 </body>
 </html>

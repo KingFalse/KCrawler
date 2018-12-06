@@ -103,7 +103,7 @@ public class IndexController {
      *
      * @return
      */
-    @GetMapping("/index")
+    @GetMapping("/")
     public String index(Model model) {
         model.addAttribute("traceId", UUID.randomUUID().toString());
         return "index";
@@ -154,7 +154,7 @@ public class IndexController {
     @ResponseBody
     public String doCrawler(@RequestBody String body
     ) throws IOException {
-        System.err.println("爬取："+body);
+        System.err.println("爬取：" + body);
         CrawlerTask task = JSON.parseObject(body, CrawlerTask.class);
         crawlerService.doCrawler(task);
         return "200";
