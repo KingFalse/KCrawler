@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <title>KCrawler-开源云爬虫</title>
     <link href="/css/index.css" rel="stylesheet" type=text/css>
-    <script src="https://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+    <script src="/js/jquery-3.3.1.min.js"></script>
     <link href="/css/loading/style.css" rel="stylesheet" type=text/css>
 </head>
 <body>
@@ -33,15 +33,29 @@
 </body>
 <script lang="javascript">
     $(function () {
+        var traceId = $("#traceId").val();
         //循环执行，每隔1秒钟执行一次 1000
         var time = window.setInterval(refreshCount, 1000);
 
         function refreshCount() {
             console.log("ready");
+            $.get("/status", {"traceId": traceId, "r": new Date().getTime()}, function (data) {
+                if (data.status) {
+                    console.log("爬取完成");
+                    //去掉定时器的方法
+                    window.clearInterval(time);
+                    download();
+                }
+            });
         }
-
-        // //去掉定时器的方法
-        // window.clearInterval(time);
     });
+
+    function download() {
+        var IFrameRequest = document.createElement("iframe");
+        IFrameRequest.id = "IFrameRequest";
+        IFrameRequest.src = "/download?traceId=" + $("#traceId").val();
+        IFrameRequest.style.display = "none";
+        document.body.appendChild(IFrameRequest);
+    }
 </script>
 </html>

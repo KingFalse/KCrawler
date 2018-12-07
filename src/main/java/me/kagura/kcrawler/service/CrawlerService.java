@@ -11,14 +11,15 @@ import org.jsoup.helper.StringUtil;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.*;
 
 @Service
@@ -26,15 +27,18 @@ public class CrawlerService {
 
     @Autowired
     JJsoup jJsoup;
+    @Value("${crawler.result.xls.dir}")
+    String dir;
 
+    @Async
     public void doCrawler(CrawlerTask task) {
         //用于存储需要爬取的url
         List<String> listTargetUrls = getTargetUrls(task);
-        doCrawler(task,listTargetUrls);
+        doCrawler(task, listTargetUrls);
     }
 
     public List<String> doCrawler(CrawlerTask task, List<String> listTargetUrls) {
-        ExecutorService executorService = Executors.newFixedThreadPool(2);
+        ExecutorService executorService = Executors.newFixedThreadPool(3);
         Future<String[]>[] futures = new Future[listTargetUrls.size()];
         for (int i = 0; i < listTargetUrls.size(); i++) {
             String url = listTargetUrls.get(i);
@@ -87,7 +91,7 @@ public class CrawlerService {
         }
 
         try {
-            FileOutputStream out = new FileOutputStream(task.getTraceId()+".xls");
+            FileOutputStream out = new FileOutputStream(dir + "/" + task.getTraceId() + ".xls");
             wb.write(out);
             out.close();
         } catch (FileNotFoundException e) {
@@ -149,6 +153,18 @@ public class CrawlerService {
             System.err.println("爬取出错");
         }
         return listTargetUrls;
+    }
+
+    public Map<String, Object> getStatus(String traceId) {
+        Map<String, Object> map = new HashMap<String, Object>() {{
+            put("status", false);
+        }};
+        File target = new File(dir + "/" + traceId + ".xls");
+        if (target.exists()) {
+            map.put("status", true);
+            return map;
+        }
+        return map;
     }
 
 }

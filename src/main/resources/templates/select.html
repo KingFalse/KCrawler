@@ -5,7 +5,7 @@
     <title>KCrawler-开源云爬虫</title>
     <link href="/css/select.css" rel="stylesheet" type=text/css>
 
-    <script src="http://libs.baidu.com/jquery/2.0.0/jquery.min.js"></script>
+    <script src="/js/jquery-3.3.1.min.js"></script>
     <script src="/js/mask.js"></script>
     <script src="/js/select.js"></script>
 </head>
@@ -100,8 +100,6 @@
             }, 2000, false);
             $("#btn-next").val("下一步");
         }, 2000, false);
-
-
     }
 
 
@@ -152,8 +150,6 @@
         $("#btn-next").attr("onclick", "step4();");
         $(".fl-table tbody").html("");
         $("#mainiframe").contents().find($("#targetSelector").val()).each(function () {
-            console.log($(this).text());
-            console.log($(this).attr("href"));
             $(".fl-table tbody").append('<tr class="nobackground"><td>' + $(this).text() + '</td><td style="text-align: left">' + $(this).attr("href") + '</td></tr>');
         });
 
@@ -180,17 +176,12 @@
             $(this).addClass('tr-click');
             $("#sampleUrl").val($(this).find("td:eq(1)").text());
         });
-
     }
 
     /**
      * 进入第四步
      */
     function step4() {
-        console.log("step4");
-        console.log("目标select：" + $("#targetSelector").val());
-        console.log("翻页select：" + $("#pageSelector").val());
-        console.log("样本select：" + $("#sampleUrl").val());
         $("#post-detail").submit();
     }
 

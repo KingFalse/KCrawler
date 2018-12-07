@@ -12,6 +12,7 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -20,9 +21,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -34,6 +35,8 @@ public class IndexController {
     JJsoup jJsoup;
     @Autowired
     CrawlerService crawlerService;
+    @Value("${crawler.result.xls.dir}")
+    String dir;
 
     public static Document convertToAbsUrlDocument(Document document) {
         Validate.notEmpty(document.baseUri(), "document.baseUri() must not be empty");
@@ -75,15 +78,7 @@ public class IndexController {
                 }
             }
         }
-
-        System.err.println(map);
-
         for (Element img : imgs) {
-            //判断是否包含src属性
-//            String src = img.attr("src");
-//            if (img.hasAttr("src") && map.containsKey(src) && map.get(src) <= 1) {
-//                continue;
-//            }
             Attributes attributes = img.attributes();
             for (Attribute attribute : attributes) {
                 if (attribute.getKey().equals("src") || attribute.getValue() == null) {
@@ -97,36 +92,23 @@ public class IndexController {
                 }
             }
         }
-
-
         return document;
     }
 
-    /**
-     * 主入口
-     *
-     * @return
-     */
     @GetMapping("/")
     public String index(Model model) {
         model.addAttribute("traceId", UUID.randomUUID().toString());
         return "index";
     }
+
     @GetMapping("/loading")
-    public String loading(Model model) {
-        model.addAttribute("traceId", UUID.randomUUID().toString());
+    public String loading(Model model, String traceId) {
+        model.addAttribute("traceId", traceId);
         return "loading";
     }
 
     @GetMapping("/select")
     public String select(Model model, String traceId, String url) throws IOException {
-//        String url = "http://sports.sohu.com/s2015/chuangye/";
-//        String url = "http://sports.qq.com/articleList/rolls/";
-//        String url = "https://news.qq.com";
-//        url = "https://www.kagura.me";
-//        String url = "https://www.ithome.com";
-//        String url = "https://anqing.meituan.com";
-//        String url = "https://www.oschina.net";
         Document document = jJsoup.connect(url).get();
         convertToAbsUrlDocument(document);
         lazyloadImage(document);
@@ -138,27 +120,23 @@ public class IndexController {
     }
 
     @GetMapping("/status")
-    public String status(Model model, String traceId, String url) throws IOException {
-        model.addAttribute("traceId", traceId);
-        return "select";
+    @ResponseBody
+    public ResponseEntity<Map> status(String traceId) {
+        Map<String, Object> status = crawlerService.getStatus(traceId);
+        return ResponseEntity.ok(status);
     }
 
-    @RequestMapping(value="/download")
-    public ResponseEntity<byte[]> download(HttpServletRequest request,
-                                           @RequestParam("filename") String filename,
-                                           Model model)throws Exception {
-        //下载文件路径
-        String path = request.getServletContext().getRealPath("/images/");
-        File file = new File(path + File.separator + filename);
+    @RequestMapping("/download")
+    public ResponseEntity<byte[]> download(String traceId) throws Exception {
+        String filename = "KCrawler爬取结果-" + traceId + ".xls";
+        File xls = new File(dir + "/" + traceId + ".xls");
         HttpHeaders headers = new HttpHeaders();
         //下载显示的文件名，解决中文名称乱码问题
-        String downloadFielName = new String(filename.getBytes("UTF-8"),"iso-8859-1");
+        String downloadFielName = new String(filename.getBytes(StandardCharsets.UTF_8), StandardCharsets.ISO_8859_1);
         //通知浏览器以attachment（下载方式）打开图片
         headers.setContentDispositionFormData("attachment", downloadFielName);
-        //application/octet-stream ： 二进制流数据（最常见的文件下载）。
         headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
-        return new ResponseEntity<byte[]>(FileUtils.readFileToByteArray(file),
-                headers, HttpStatus.CREATED);
+        return new ResponseEntity<>(FileUtils.readFileToByteArray(xls), headers, HttpStatus.CREATED);
     }
 
     @PostMapping("/select/detail")
@@ -185,12 +163,10 @@ public class IndexController {
 
     @PostMapping("/docrawler")
     @ResponseBody
-    public String doCrawler(@RequestBody String body
-    ) throws IOException {
-        System.err.println("爬取：" + body);
+    public String doCrawler(@RequestBody String body) {
         CrawlerTask task = JSON.parseObject(body, CrawlerTask.class);
         crawlerService.doCrawler(task);
-        return "200";
+        return "OK";
     }
 
 }

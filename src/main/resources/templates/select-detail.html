@@ -3,11 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <title>KCrawler-开源云爬虫</title>
-
     <link href="/css/select.css" rel="stylesheet" type=text/css>
-    <script src="http://libs.baidu.com/jquery/2.0.0/jquery.min.js"></script>
-    <link href="http://www.semantic-ui.cn/dist/semantic.min.css" rel="stylesheet" type="text/css">
-    <script src="http://www.semantic-ui.cn/dist/semantic.min.js"></script>
+    <script src="/js/jquery-3.3.1.min.js"></script>
+    <link href="/css/semantic/semantic.min.css" rel="stylesheet" type="text/css">
+    <script src="/js/semantic/semantic.min.js"></script>
     <script src="/js/mask.js"></script>
     <script src="/js/select.js"></script>
 </head>
@@ -142,13 +141,6 @@
         changeFrameHeight();
 
         $("#btn-next").hide();
-
-        // $('.main').mask('<div style=\"color:deeppink;font-size:6vw;;white-space:nowrap;\">请点选需要抓取的超链接</div>', function () {
-        //     $('.main').mask('<div style=\"color:deeppink;font-size:6vw;;white-space:nowrap;\">如需抓取本页，请直接下一步</div>', function () {
-        //     }, 2000, false, false);
-        // }, 2000, false, false);
-
-
     }
 
 
@@ -174,7 +166,6 @@
             "<table class=\"fl-table\">\n" +
             "    <thead>\n" +
             "    <tr>\n" +
-            // "        <th style=\"width: "+$(window).width()*0.7+"px\" colspan=\"2\">爬取预览</th>\n" +
             "        <th colspan=\"2\">爬取预览</th>\n" +
             "    </tr>\n" +
             "    </thead>\n" +
@@ -252,23 +243,15 @@
             type: 'POST',
             url: "/docrawler",
             data: JSON.stringify(body),
-            // success: function (message) {
-            //     if (message.err.code)
-            //         alert(message.err.code);
-            //     if (message.err.code) {
-            //         alert(message.err.code);
-            //     }
-            //
-            // },
-            // error: function (message) {
-            //     console.log(message);
-            //     alert("提交数据失败！888" + message);
-            //
-            // }
+            success: function (message) {
+                window.location.href = "/loading?traceId=" + $("#traceId").val();
+            },
+            error: function (message) {
+                alert("提交数据失败，请稍后尝试！" + message);
+            }
         });
 
     }
-
     var map = new Map();
 </script>
 </body>

@@ -70,11 +70,12 @@ public class CrawlerTask {
 
     @Override
     public String toString() {
-        return "Task{" +
-                "targetSelector='" + targetSelector + '\'' +
+        return "CrawlerTask{" +
+                "traceId='" + traceId + '\'' +
+                ", targetSelector='" + targetSelector + '\'' +
                 ", pageSelector='" + pageSelector + '\'' +
                 ", targetPageType='" + targetPageType + '\'' +
-                ", targetPageCount='" + targetPageCount + '\'' +
+                ", targetPageCount=" + targetPageCount +
                 ", startUrl='" + startUrl + '\'' +
                 ", targetNodes=" + targetNodes +
                 '}';
