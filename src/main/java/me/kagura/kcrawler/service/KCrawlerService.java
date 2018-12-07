@@ -1,7 +1,9 @@
 package me.kagura.kcrawler.service;
 
 import me.kagura.JJsoup;
+import me.kagura.kcrawler.common.KCUtil;
 import me.kagura.kcrawler.entity.CrawlerTask;
+import me.kagura.util.JJsoupUtil;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -43,6 +45,12 @@ public class KCrawlerService {
         logger.info("结束爬取任务：{}", task.getTraceId());
     }
 
+    /**
+     * 执行爬取跟保存
+     *
+     * @param task
+     * @param listTargetUrls
+     */
     public void doCrawler(CrawlerTask task, List<String> listTargetUrls) {
         ExecutorService executorService = Executors.newFixedThreadPool(3);
         Future<String[]>[] futures = new Future[listTargetUrls.size()];
@@ -116,6 +124,12 @@ public class KCrawlerService {
 
     }
 
+    /**
+     * 便利翻页获取所有需要爬取的链接
+     *
+     * @param task
+     * @return
+     */
     public List<String> getTargetUrls(CrawlerTask task) {
         logger.info("开始获取任务：{}的所有翻页", task.getTraceId());
         //用于存储需要爬取的url
@@ -162,6 +176,12 @@ public class KCrawlerService {
         return listTargetUrls;
     }
 
+    /**
+     * 获取指定任务是否爬取完成
+     *
+     * @param traceId
+     * @return
+     */
     public Map<String, Object> getStatus(String traceId) {
         Map<String, Object> map = new HashMap<String, Object>() {{
             put("status", false);
@@ -172,6 +192,20 @@ public class KCrawlerService {
             return map;
         }
         return map;
+    }
+
+    /**
+     * 获取处理好的页面
+     *
+     * @param url
+     * @return
+     * @throws IOException
+     */
+    public Document getDoument(String url) throws IOException {
+        Document document = jJsoup.connect(url).get();
+        JJsoupUtil.convertToAbsUrlDocument(document);
+        KCUtil.lazyloadImage(document);
+        return document;
     }
 
 }

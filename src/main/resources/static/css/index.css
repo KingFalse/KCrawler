@@ -146,5 +146,6 @@ a:hover, span:hover, p:hover {
 
 #startCrawl .more a {
     cursor: pointer;
-    color: #4285F4;
+    color: white;
+    margin: 30px;
 }
