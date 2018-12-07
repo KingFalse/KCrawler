@@ -85,7 +85,6 @@ public class KCrawlerController {
                     continue;
                 }
                 //判断该属性是否是图片链接
-                System.err.println(attribute.getValue());
                 if (attribute.getValue().matches("^[\\d\\D]*(\\.gif|\\.jpeg|\\.png|\\.jpg|\\.bmp)$")) {
                     img.attr("src", img.attr("abs:" + attribute.getKey()));
                     break;

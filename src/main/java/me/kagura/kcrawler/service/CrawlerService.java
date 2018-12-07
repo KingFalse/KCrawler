@@ -37,7 +37,7 @@ public class CrawlerService {
         doCrawler(task, listTargetUrls);
     }
 
-    public List<String> doCrawler(CrawlerTask task, List<String> listTargetUrls) {
+    public void doCrawler(CrawlerTask task, List<String> listTargetUrls) {
         ExecutorService executorService = Executors.newFixedThreadPool(3);
         Future<String[]>[] futures = new Future[listTargetUrls.size()];
         for (int i = 0; i < listTargetUrls.size(); i++) {
@@ -104,11 +104,6 @@ public class CrawlerService {
             e.printStackTrace();
         }
 
-        System.err.println("=================================================");
-        System.err.println("爬取完成！");
-
-        return null;
-
     }
 
     public List<String> getTargetUrls(CrawlerTask task) {
@@ -147,14 +142,9 @@ public class CrawlerService {
                 }
                 document = jJsoup.connect(listPageUrls.get(i + 1)).method(Connection.Method.GET).execute().parse();
             }
-            listPageUrls.forEach(url -> System.err.println(url));
-            System.err.println("==========================");
-            System.err.println(listPageUrls.size());
-            System.err.println(listTargetUrls.size());
 
         } catch (IOException e) {
             e.printStackTrace();
-            System.err.println("爬取出错");
         }
         return listTargetUrls;
     }
