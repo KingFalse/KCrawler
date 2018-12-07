@@ -2,6 +2,8 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
+    <meta name="KCrawler官网" content="https://kc.kagura.me/">
+    <meta name="鹞之神乐" content="https://www.kagura.me/">
     <title>KCrawler-开源云爬虫</title>
     <link href="/css/select.css" rel="stylesheet" type=text/css>
 
@@ -15,7 +17,7 @@
         <li>
             <input class="btn" type="button" value="返回">
         </li>
-        <li style="width: 80%;text-align: center">qwe</li>
+        <li id="alert" style="width: 80%;text-align: center"></li>
         <li class="right">
             <input class="btn" id="btn-next" onclick="step1();" type="button" value="下一步">
         </li>
@@ -93,6 +95,7 @@
 
         $("#btn-next").hide();
         $("#btn-next").val("确定");
+        $("#alert").text("请点选需要抓取的超链接");
         $('.main').mask('<div style=\"color:deeppink;font-size:6vw;;white-space:nowrap;\">请点选需要抓取的超链接</div>', function () {
             $('.main').mask('<div style=\"color:deeppink;font-size:6vw;;white-space:nowrap;\">如需抓取本页，请直接下一步</div>', function () {
                 $("#btn-next").val("下一步");
@@ -131,6 +134,7 @@
 
         $("#btn-next").hide();
         $("#btn-next").val("确定");
+        $("#alert").text("请选择翻页元素");
         $('.main').mask('<div style=\"color:deeppink;font-size:6vw;;white-space:nowrap;\">接下来请选择翻页元素</div>', function () {
             $('.main').mask('<div style=\"color:deeppink;font-size:6vw;;white-space:nowrap;\">如无需翻页，请直接下一步</div>', function () {
                 $("#btn-next").val("下一步");

@@ -84,6 +84,14 @@ li,
 }
 
 
+#alert{
+    font-size: 2em;
+    padding-top: 10px;
+    /*font-weight: 200;*/
+    color: #ffffff;
+}
+
+
 /* Table Styles */
 
 .table-wrapper {

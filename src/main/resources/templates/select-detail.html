@@ -2,6 +2,8 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
+    <meta name="KCrawler官网" content="https://kc.kagura.me/">
+    <meta name="鹞之神乐" content="https://www.kagura.me/">
     <title>KCrawler-开源云爬虫</title>
     <link href="/css/select.css" rel="stylesheet" type=text/css>
     <script src="/js/jquery-3.3.1.min.js"></script>
@@ -16,6 +18,7 @@
         <li>
             <input class="btn" type="button" value="返回">
         </li>
+        <li id="alert" style="width: 80%;text-align: center"></li>
         <li class="right">
             <input class="btn" id="btn-next" onclick="step1();" type="button" value="下一步">
         </li>
@@ -56,6 +59,8 @@
 </div>
 <script lang="javascript">
     function startInit() {
+
+        $("#alert").text("请点选需要抓取的元素");
 
         pageInit();
         /**
@@ -209,7 +214,10 @@
         "</table>" +
         "";
         $("#btn-next").val("确定");
-        $('.main').mask('<div>' + showdetail + '</div>', "x", "x", true);
+        $('.main').mask('<div>' + showdetail + '</div>', function () {
+            $("#btn-next").val("下一步");
+            $("#btn-next").attr("onclick", "nextstep();");
+        }, "x", true);
         $("#btn-next").val("开始爬取");
         $("#btn-next").attr("onclick", "doCrawler();");
     }
