@@ -81,7 +81,11 @@ public class CrawlerService {
                 String[] vals = futures[i].get();
                 Row row = sheet.createRow(i);
                 for (int i1 = 0; i1 < vals.length; i1++) {
-                    row.createCell(i1).setCellValue(vals[i1]);
+                    String val = vals[i1]
+                            .replaceAll("\n", "")
+                            .replaceAll("\r", "")
+                            .replaceAll("\t", "");
+                    row.createCell(i1).setCellValue(val);
                 }
             } catch (InterruptedException e) {
                 e.printStackTrace();

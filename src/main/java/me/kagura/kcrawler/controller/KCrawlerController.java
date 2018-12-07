@@ -29,7 +29,7 @@ import java.util.Map;
 import java.util.UUID;
 
 @Controller
-public class IndexController {
+public class KCrawlerController {
 
     @Autowired
     JJsoup jJsoup;
