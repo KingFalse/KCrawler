@@ -13,7 +13,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 public class CrawlerServiceTest {
 
     @Autowired
-    CrawlerService crawlerService;
+    KCrawlerService crawlerService;
 
     @Test
     public void doCrawler() {

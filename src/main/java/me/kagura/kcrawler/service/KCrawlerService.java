@@ -10,6 +10,8 @@ import org.jsoup.Connection;
 import org.jsoup.helper.StringUtil;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
@@ -23,7 +25,9 @@ import java.util.*;
 import java.util.concurrent.*;
 
 @Service
-public class CrawlerService {
+public class KCrawlerService {
+
+    private static Logger logger = LoggerFactory.getLogger(KCrawlerService.class);
 
     @Autowired
     JJsoup jJsoup;
@@ -32,9 +36,11 @@ public class CrawlerService {
 
     @Async
     public void doCrawler(CrawlerTask task) {
+        logger.info("开始爬取任务：{}", task.getTraceId());
         //用于存储需要爬取的url
         List<String> listTargetUrls = getTargetUrls(task);
         doCrawler(task, listTargetUrls);
+        logger.info("结束爬取任务：{}", task.getTraceId());
     }
 
     public void doCrawler(CrawlerTask task, List<String> listTargetUrls) {
@@ -46,7 +52,9 @@ public class CrawlerService {
                 @Override
                 public String[] call() throws Exception {
                     List<String> result = new ArrayList<>();
+                    logger.info("任务：{},开始获取页面：{}", task.getTraceId(), url);
                     Connection.Response response = jJsoup.connect(url).method(Connection.Method.GET).execute();
+                    logger.info("任务：{},结束获取页面：{},返回状态码：{}", task.getTraceId(), url, response.statusCode());
                     Document document = response.parse();
                     String title = document.title();
                     result.add(title);
@@ -64,7 +72,6 @@ public class CrawlerService {
                             }
                         }
                     });
-
                     String[] resultArray = new String[result.size()];
                     result.toArray(resultArray);
                     return resultArray;
@@ -73,7 +80,7 @@ public class CrawlerService {
         }
         executorService.shutdown();
 
-
+        logger.info("开始写入xls：{}", task.getTraceId());
         Workbook wb = new HSSFWorkbook();
         Sheet sheet = wb.createSheet("KCrawler爬取结果");
         for (int i = 0; i < futures.length; i++) {
@@ -88,25 +95,29 @@ public class CrawlerService {
                     row.createCell(i1).setCellValue(val);
                 }
             } catch (InterruptedException e) {
-                e.printStackTrace();
+                logger.error("写入xls异常：{}", task.getTraceId(), e);
             } catch (ExecutionException e) {
-                e.printStackTrace();
+                logger.error("写入xls异常：{}", task.getTraceId(), e);
             }
         }
+        logger.info("结束写入xls：{}", task.getTraceId());
 
         try {
+            logger.info("开始输出xls到文件：{}", task.getTraceId());
             FileOutputStream out = new FileOutputStream(dir + "/" + task.getTraceId() + ".xls");
             wb.write(out);
             out.close();
+            logger.info("完成输出xls到文件：{}", task.getTraceId());
         } catch (FileNotFoundException e) {
-            e.printStackTrace();
+            logger.error("输出xls到文件异常：{}", task.getTraceId(), e);
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.error("输出xls到文件异常：{}", task.getTraceId(), e);
         }
 
     }
 
     public List<String> getTargetUrls(CrawlerTask task) {
+        logger.info("开始获取任务：{}的所有翻页", task.getTraceId());
         //用于存储需要爬取的url
         List<String> listTargetUrls = Collections.synchronizedList(new ArrayList<>());
         try {
@@ -144,8 +155,10 @@ public class CrawlerService {
             }
 
         } catch (IOException e) {
+            logger.error("任务：{}处理翻页异常", task.getTraceId(), e);
             e.printStackTrace();
         }
+        logger.info("结束获取任务：{}的所有翻页,总链接数：{}", task.getTraceId(), listTargetUrls.size());
         return listTargetUrls;
     }
 

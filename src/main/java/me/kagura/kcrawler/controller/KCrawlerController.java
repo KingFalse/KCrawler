@@ -2,15 +2,16 @@ package me.kagura.kcrawler.controller;
 
 import com.alibaba.fastjson.JSON;
 import me.kagura.JJsoup;
+import me.kagura.kcrawler.common.KCUtil;
 import me.kagura.kcrawler.entity.CrawlerTask;
-import me.kagura.kcrawler.service.CrawlerService;
+import me.kagura.kcrawler.service.KCrawlerService;
 import org.apache.commons.io.FileUtils;
 import org.jsoup.helper.Validate;
-import org.jsoup.nodes.Attribute;
-import org.jsoup.nodes.Attributes;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
@@ -24,17 +25,18 @@ import org.springframework.web.bind.annotation.*;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
 @Controller
 public class KCrawlerController {
 
+    private static Logger logger = LoggerFactory.getLogger(KCrawlerController.class);
+
     @Autowired
     JJsoup jJsoup;
     @Autowired
-    CrawlerService crawlerService;
+    KCrawlerService crawlerService;
     @Value("${crawler.result.xls.dir}")
     String dir;
 
@@ -60,39 +62,6 @@ public class KCrawlerController {
         return document;
     }
 
-    /**
-     * 1.选出所有的img
-     * 2.判断是否有.jog结尾的属性，有则继续
-     * 3.如果没有src属性则直接增加src，如果有src，则判断src是否重复出现，如果重复则替换src
-     */
-    public static Document lazyloadImage(Document document) {
-        Map<String, Integer> map = new HashMap<>();
-        Elements imgs = document.select("img");
-        for (Element img : imgs) {
-            if (img.hasAttr("src")) {
-                String src = img.attr("src");
-                if (map.containsKey(src)) {
-                    map.put(src, map.get(src) + 1);
-                } else {
-                    map.put(src, 0);
-                }
-            }
-        }
-        for (Element img : imgs) {
-            Attributes attributes = img.attributes();
-            for (Attribute attribute : attributes) {
-                if (attribute.getKey().equals("src") || attribute.getValue() == null) {
-                    continue;
-                }
-                //判断该属性是否是图片链接
-                if (attribute.getValue().matches("^[\\d\\D]*(\\.gif|\\.jpeg|\\.png|\\.jpg|\\.bmp)$")) {
-                    img.attr("src", img.attr("abs:" + attribute.getKey()));
-                    break;
-                }
-            }
-        }
-        return document;
-    }
 
     @GetMapping("/")
     public String index(Model model) {
@@ -116,7 +85,7 @@ public class KCrawlerController {
     public String select(Model model, String traceId, String url) throws IOException {
         Document document = jJsoup.connect(url).get();
         convertToAbsUrlDocument(document);
-        lazyloadImage(document);
+        KCUtil.lazyloadImage(document);
         document.select("script").remove();
         model.addAttribute("srcdoc", document.html());
         model.addAttribute("url", url);
@@ -155,7 +124,7 @@ public class KCrawlerController {
     ) throws IOException {
         Document document = jJsoup.connect(sampleUrl).get();
         convertToAbsUrlDocument(document);
-        lazyloadImage(document);
+        KCUtil.lazyloadImage(document);
         document.select("script").remove();
         model.addAttribute("srcdoc", document.html());
         model.addAttribute("sampleUrl", sampleUrl);
@@ -169,6 +138,7 @@ public class KCrawlerController {
     @PostMapping("/docrawler")
     @ResponseBody
     public String doCrawler(@RequestBody String body) {
+        logger.info("收到爬取任务JSON：{}", body);
         CrawlerTask task = JSON.parseObject(body, CrawlerTask.class);
         crawlerService.doCrawler(task);
         return "OK";
