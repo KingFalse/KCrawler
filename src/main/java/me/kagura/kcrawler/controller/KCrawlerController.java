@@ -107,6 +107,12 @@ public class KCrawlerController {
         return "loading";
     }
 
+    @GetMapping("/success")
+    public String success(Model model, String traceId) {
+        model.addAttribute("traceId", traceId);
+        return "success";
+    }
+
     @GetMapping("/select")
     public String select(Model model, String traceId, String url) throws IOException {
         Document document = jJsoup.connect(url).get();

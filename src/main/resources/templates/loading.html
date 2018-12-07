@@ -44,18 +44,10 @@
                     console.log("爬取完成");
                     //去掉定时器的方法
                     window.clearInterval(time);
-                    download();
+                    window.location.href = "/success?traceId=" + traceId;
                 }
             });
         }
     });
-
-    function download() {
-        var IFrameRequest = document.createElement("iframe");
-        IFrameRequest.id = "IFrameRequest";
-        IFrameRequest.src = "/download?traceId=" + $("#traceId").val();
-        IFrameRequest.style.display = "none";
-        document.body.appendChild(IFrameRequest);
-    }
 </script>
 </html>
