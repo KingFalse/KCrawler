@@ -2,6 +2,7 @@ package me.kagura.kcrawler.controller;
 
 import com.alibaba.fastjson.JSON;
 import me.kagura.JJsoup;
+import me.kagura.kcrawler.common.KCUtil;
 import me.kagura.kcrawler.entity.CrawlerTask;
 import me.kagura.kcrawler.service.KCrawlerService;
 import org.apache.commons.io.FileUtils;
@@ -47,6 +48,8 @@ public class KCrawlerController {
     public String select(Model model, String traceId, String url) throws IOException {
         Document document = crawlerService.getDoument(url);
         document.select("script").remove();
+        String autoPageSelector = KCUtil.getRetardedTurnSelector(document);
+        model.addAttribute("autoPageSelector", autoPageSelector);
         model.addAttribute("srcdoc", document.html());
         model.addAttribute("url", url);
         model.addAttribute("traceId", traceId);

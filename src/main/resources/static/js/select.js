@@ -64,7 +64,7 @@ function pageInit() {
     $("#mainiframe").contents().find("*").mouseover(function (e) {
         var path = getCssPath(e.target);
         console.log("鼠标所在：" + path);
-        $("#mainiframe").contents().find(path).css('outline', 'solid 3px #677CFF');
+        $("#mainiframe").contents().find(path).css('outline', 'solid 3px #FF5E52');
     });
     /**
      * 鼠标出去时自动取消高亮

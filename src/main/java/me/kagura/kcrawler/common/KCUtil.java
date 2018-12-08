@@ -43,4 +43,27 @@ public class KCUtil {
         }
         return document;
     }
+
+    /**
+     * 半智障自动翻页算法
+     *
+     * @param document
+     * @return
+     */
+    public static String getRetardedTurnSelector(Document document) {
+        Elements select = document.select("a:matchesOwn(^\\d+$)");
+        if (select.size() > 0) {
+            return select.first().cssSelector().replaceAll(":nth-child\\(\\d+\\)", "");
+        }
+        select = document.select("a:containsOwn(下一页)");
+        if (select.size() > 0) {
+            return select.first().cssSelector().replaceAll(":nth-child\\(\\d+\\)", "");
+        }
+        select = document.select("a:containsOwn(下页)");
+        if (select.size() > 0) {
+            return select.first().cssSelector().replaceAll(":nth-child\\(\\d+\\)", "");
+        }
+        return "";
+    }
+
 }

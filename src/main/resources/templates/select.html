@@ -2,8 +2,8 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <meta name="KCrawler官网" content="https://kc.kagura.me/">
-    <meta name="鹞之神乐" content="https://www.kagura.me/">
+    <meta content="https://kc.kagura.me/" name="KCrawler官网">
+    <meta content="https://www.kagura.me/" name="鹞之神乐">
     <title>KCrawler-开源云爬虫</title>
     <link href="/css/select.css" rel="stylesheet" type=text/css>
 
@@ -22,6 +22,8 @@
             <input class="btn" id="btn-next" onclick="step1();" type="button" value="下一步">
         </li>
     </ul>
+    <!--记录自动翻页cssSelector-->
+    <input id="autoPageSelector" th:value="${autoPageSelector}" type="hidden">
     <!--临时变量，记录当前被点击的cssSelector-->
     <input id="selector" type="hidden" value="">
     <form action="/select/detail" id="post-detail" method="post">
@@ -139,8 +141,10 @@
             $('.main').mask('<div style=\"color:deeppink;font-size:6vw;;white-space:nowrap;\">如无需翻页，请直接下一步</div>', function () {
                 $("#btn-next").val("下一步");
                 $("#btn-next").show();
-                // $("#mainiframe").contents().find('html,body').animate({scrollTop: $("#mainiframe").contents().find(".page_num a").offset().top - $("#mainiframe").height() * 0.5}, 300);
-                // $("#mainiframe").contents().find(".page_num a").css('outline', 'solid 10px #677CFF');
+                if ($("#autoPageSelector").val() != "") {
+                    $("#mainiframe").contents().find('html,body').animate({scrollTop: $("#mainiframe").contents().find($("#autoPageSelector").val()).offset().top - $("#mainiframe").height() * 0.5}, 300);
+                    $("#mainiframe").contents().find($("#autoPageSelector").val()).css('outline', 'solid 10px #FF5E52');
+                }
             }, 2000, false);
             $("#btn-next").val("下一步");
         }, 2000, false);
