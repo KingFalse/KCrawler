@@ -10,5 +10,10 @@ KCrawler-开源云爬虫
 * 目前想到的就这些
 
 ## 适用性：
-适用于各种伪静态页面。
-动态页面暂不支持，可搭配WebDriver实现。
+* 适用于各种伪静态页面。
+* 动态页面暂不支持，可搭配WebDriver实现。
+
+## 如何运行：
+1. mvn clean package
+2. java -jar KCrawler.jar
+3. 浏览器访问：http://127.0.0.1:8080
