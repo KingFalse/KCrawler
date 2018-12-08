@@ -10,6 +10,7 @@
 
     <name>KCrawler</name>
     <description>KCrawler-开源云爬虫</description>
+    <url>https://github.com/KingFalse/KCrawler</url>
 
     <parent>
         <groupId>org.springframework.boot</groupId>
@@ -56,6 +57,23 @@
         </dependency>
     </dependencies>
 
+    <licenses>
+        <license>
+            <name>The MIT License</name>
+            <url>https://github.com/KingFalse/KCrawler/blob/master/LICENSE</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
+    <developers>
+        <developer>
+            <id>KingFalse</id>
+            <name>Zhuo Fang</name>
+            <email>yzsl@live.com</email>
+            <timezone>+8</timezone>
+        </developer>
+    </developers>
+
     <build>
         <finalName>${project.name}</finalName>
         <plugins>
@@ -65,6 +83,5 @@
             </plugin>
         </plugins>
     </build>
-
 
 </project>
