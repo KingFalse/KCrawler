@@ -2,9 +2,9 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <meta name="KCrawler官网" content="https://kc.kagura.me/">
-    <meta name="鹞之神乐" content="https://www.kagura.me/">
-    <meta name="GitHub" content="https://github.com/KingFalse/KCrawler">
+    <meta content="https://kc.kagura.me/" name="KCrawler官网">
+    <meta content="https://www.kagura.me/" name="鹞之神乐">
+    <meta content="https://github.com/KingFalse/KCrawler" name="GitHub">
     <title>KCrawler-开源云爬虫</title>
     <link href="/css/select.css" rel="stylesheet" type=text/css>
     <script src="/js/jquery-3.3.1.min.js"></script>
@@ -17,7 +17,7 @@
 <div class="header">
     <ul class="content">
         <li>
-            <input class="btn" type="button" value="返回">
+            <input class="btn" id="return" type="button" value="首页">
         </li>
         <li id="alert" style="width: 80%;text-align: center"></li>
         <li class="right">
@@ -59,6 +59,10 @@
     </table>
 </div>
 <script lang="javascript">
+    $("#return").click(function () {
+        window.location.href = "/";
+    });
+
     function startInit() {
 
         $("#alert").text("请点选需要抓取的元素");
@@ -261,6 +265,7 @@
         });
 
     }
+
     var map = new Map();
 </script>
 </body>
