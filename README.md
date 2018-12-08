@@ -6,7 +6,7 @@ KCrawler-开源云爬虫
 
 ## 借物表：
 * success.html页面的猫：[https://blog.csdn.net/qq_32584661/article/details/55260288](https://blog.csdn.net/qq_32584661/article/details/55260288)
-* Loading.html页面动画：[https://www.html5tricks.com/svg-spiral-loading.html](https://www.html5tricks.com/svg-spiral-loading.html)
+* loading.html页面动画：[https://www.html5tricks.com/svg-spiral-loading.html](https://www.html5tricks.com/svg-spiral-loading.html)
 * 目前想到的就这些
 
 ## 适用性：
