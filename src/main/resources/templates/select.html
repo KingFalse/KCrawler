@@ -77,6 +77,12 @@
             var path = getCssPath(dom);
             console.log("被点击的元素：" + path);
 
+            //判断被点击的元素是不是a标签
+            if (dom.tagName != "A") {
+                $('.main').mask('<div style=\"color:deeppink;font-size:3vw;;white-space:nowrap;\">请点击超链接！</div>', "x", "x", true);
+                return;
+            }
+
             $(".fl-table tbody").html("");
             $("#mainiframe").contents().find(path).each(function () {
                 console.log($(this).text());
@@ -93,7 +99,7 @@
             $("#btn-next").val("确定");
             $('.main').mask('<div style=\"height:' + h + 'px;overflow-y: auto;\">' + $(".table-wrapper").html() + '</div>', function () {
                 $("#btn-next").val("下一步");
-            }, "x", true, true);
+            }, "x", true);
 
         };
 
