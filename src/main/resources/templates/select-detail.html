@@ -74,8 +74,7 @@
          */
         document.getElementById('mainiframe').contentWindow.document.onclick = function (event) {
             $("#btn-next").show();
-            var dom = document.getElementById('mainiframe').contentWindow.document.elementFromPoint(event.clientX, event.clientY);
-            var path = getCssPath(dom);
+            var path = getCssPath(event.target);
             console.log("被点击的元素：" + path);
 
             $(".fl-table tbody").html("");

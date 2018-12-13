@@ -73,12 +73,12 @@
          * @param ev
          */
         document.getElementById('mainiframe').contentWindow.document.onclick = function (event) {
-            var dom = document.getElementById('mainiframe').contentWindow.document.elementFromPoint(event.clientX, event.clientY);
-            var path = getCssPath(dom);
+            var target = event.target;
+            var path = getCssPath(target);
             console.log("被点击的元素：" + path);
 
             //判断被点击的元素是不是a标签
-            if (dom.tagName != "A") {
+            if (target.tagName != "A") {
                 $('.main').mask('<div style=\"color:deeppink;font-size:3vw;;white-space:nowrap;\">请点击超链接！</div>', "x", "x", true);
                 return;
             }
