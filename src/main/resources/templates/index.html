@@ -56,10 +56,8 @@
     /**
      * 判断url合法性
      */
-    function isURL(str_url) {// 验证url
-        var reg = "/(http|ftp|https):\\/\\/[\\w\\-_]+(\\.[\\w\\-_]+)+([\\w\\-\\.,@?^=%&:/~\\+#]*[\\w\\-\\@?^=%&/~\\+#])?/";
-        var re = new RegExp(reg);
-        return re.test(str_url);
+    function isURL(str_url) {
+        return str_url.indexOf("http") == 0 ? true : false;
     }
 
     /**
