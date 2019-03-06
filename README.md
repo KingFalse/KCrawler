@@ -1,6 +1,8 @@
 # KCrawler
 KCrawler-开源云爬虫
 
+[测试机器：http://140.143.139.131:8080/](http://140.143.139.131:8080/)
+
 ## 为什么搞这个？
 15-16年的时候写过一个exe的可视化爬虫[https://www.bilibili.com/video/av8405354](https://www.bilibili.com/video/av8405354)，最近看见了造数。然后我就把我原来写的也搬到了网页上。
 
